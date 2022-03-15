@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Voucher;
+use App\Models\LedgerHead;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Models\TransactionDetail;
 
 class VoucherController extends Controller
 {
@@ -20,16 +24,6 @@ class VoucherController extends Controller
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -93,6 +87,42 @@ class VoucherController extends Controller
         try {
             $manage->delete();
             toast('Voucher type deleted successfully', 'success');
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function accounting_voucher_create()
+    {
+        try {
+            $ledgerHeads = LedgerHead::where('parent_id', '!=', 0)->get();
+            $vouchers = Voucher::all();
+            return view('backend.content.voucher.transaction.create', compact('ledgerHeads', 'vouchers'));
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function accounting_voucher_store(Request $request)
+    {
+        try {
+            $transaction = Transaction::create([
+                'company_id' => auth()->user()->company,
+                'voucher_type' => $request->voucher_type,
+                'total_amount' => $request->total_amount,
+                'narration' => $request->narration,
+                'date' => Carbon::parse($request->date)->format('Y-m-d')
+            ]);
+            foreach ($request->account_type as $index => $account_type) {
+                TransactionDetail::create([
+                    'transaction_id' => $transaction->id,
+                    'particular' => $account_type,
+                    'ledger_head' => $request->particular[$index],
+                    'amount' => $request->amount[$index],
+                ]);
+            }
+            toast('Voucher created successfully!', 'success');
             return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();

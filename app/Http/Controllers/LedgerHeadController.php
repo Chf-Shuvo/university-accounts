@@ -15,7 +15,7 @@ class LedgerHeadController extends Controller
     public function index()
     {
         try {
-            $items = LedgerHead::orderBy('parent_id', 'asc')->get();
+            $items = LedgerHead::where('company_id', auth()->user()->company)->orderBy('parent_id', 'asc')->get();
             // return $items;
             return view('backend.content.ledgerHeads.index', compact('items'));
         } catch (\Exception $e) {
@@ -32,11 +32,15 @@ class LedgerHeadController extends Controller
     public function store(Request $request)
     {
         try {
+            return $request;
             LedgerHead::firstOrCreate(
                 ['name' => $request->name],
                 [
                     'head_code' => $request->head_code,
-                    'parent_id' => $request->parent_id
+                    'parent_id' => $request->parent_id,
+                    'company_id' => auth()->user()->company,
+                    'name_of_group' => $request->name_of_group,
+                    'visibility_order' => $request->visibility_order
                 ]
             );
             toast()->success('Account Head Created');
@@ -92,6 +96,29 @@ class LedgerHeadController extends Controller
             $ledgerHead->delete();
             toast()->success('Account Head Removed');
             return redirect()->back();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+    // single ledgers
+    public function single_ledgers()
+    {
+        try {
+            $items = LedgerHead::orderBy('parent_id', 'asc')->get();
+            $items = $items->where('has_child', 0);
+            return view('backend.content.ledgerHeads.index', compact('items'));
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+    // group ledgers
+    public function group_ledgers()
+    {
+        try {
+            $items = LedgerHead::orderBy('parent_id', 'asc')->get();
+            $items = $items->where('has_child', '!=', 0);
+            // return $items;
+            return view('backend.content.ledgerHeads.index', compact('items'));
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

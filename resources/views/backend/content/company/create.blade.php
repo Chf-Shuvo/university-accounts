@@ -48,38 +48,32 @@
                 </div>
                 <div class="col-md-6 col-lg-5">
                     <div class="login-box bg-white box-shadow border-radius-10">
-                        <form method="POST" action="{{ route('login') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('company.store') }}" enctype="multipart/form-data">
                             @csrf
-                            <div class="input-group custom">
-                                <input type="text" class="form-control form-control-lg"
-                                    placeholder="email@baiust.edu.bd" name="email">
-                                <div class="input-group-append custom">
-                                    <span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 col-12">
+                                    <label for="">Company Name:</label>
+                                    <input type="text" class="form-control" name="name" required>
                                 </div>
-                            </div>
-                            <div class="input-group custom">
-                                <input type="password" class="form-control form-control-lg" placeholder="**********"
-                                    name="password">
-                                <div class="input-group-append custom">
-                                    <span class="input-group-text"><i class="dw dw-padlock1"></i></span>
+                                <div class="form-group col-md-12 col-12">
+                                    <label for="">Company Email:</label>
+                                    <input type="email" class="form-control" name="email">
                                 </div>
-                            </div>
-                            <div class="row pb-30">
-                                <div class="col-12">
-                                    <div class="forgot-password"><a href="{{ route('password.request') }}"
-                                            class="text-danger">Forgot Password</a></div>
+                                <div class="form-group col-md-12 col-12">
+                                    <label for="">Company Address:</label>
+                                    <input type="text" class="form-control" name="address">
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="input-group mb-0">
-                                        <button class="btn btn-primary btn-lg btn-block" type="submit">Sign In</button>
-                                    </div>
+                                <div class="form-group col-md-12 col-12">
+                                    <label for="">Company Contact Number:</label>
+                                    <input type="text" class="form-control" name="phone">
                                 </div>
-                                <div class="col-12 text-center">
-                                    <label class="my-3">Or</label>
-                                    <a href="{{ route('company.create') }}"
-                                        class="btn btn-info btn-lg btn-block">Create Company</a>
+                                <div class="form-group col-md-12 col-12">
+                                    <label for="">Company Website:</label>
+                                    <input type="text" class="form-control" name="website">
+                                </div>
+                                <div class="form-group col-md-12 col-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-lg btn-block">Create
+                                        Company</button>
                                 </div>
                             </div>
                         </form>

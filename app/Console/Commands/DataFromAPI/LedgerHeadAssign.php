@@ -59,7 +59,8 @@ class LedgerHeadAssign extends Command
                 LedgerHead::firstOrCreate(
                     ['name' => $student['ledger_head']],
                     [
-                        'parent_id' => $parent_id
+                        'parent_id' => $parent_id,
+                        'company_id' => 1
                     ]
                 );
             }

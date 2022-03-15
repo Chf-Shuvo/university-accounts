@@ -29,6 +29,7 @@ $("document").ready(function () {
         autoWidth: false,
         responsive: true,
         pageLength: 15,
+        aaSorting: [],
         columnDefs: [
             {
                 targets: "datatable-nosort",
