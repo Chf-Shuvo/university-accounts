@@ -22,7 +22,20 @@ class HomeController extends Controller
     public function index()
     {
         try {
-            return view('backend.content.dashboard');
+            return view("backend.content.dashboard");
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function change_period(Request $request)
+    {
+        try {
+            session()->put([
+                "start_date" => $request->from,
+                "end_date" => $request->to,
+            ]);
+            return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -33,8 +46,8 @@ class HomeController extends Controller
         try {
             Auth::logout();
             Session::flush();
-            toast('User logged out!', 'success');
-            return redirect()->route('login');
+            toast("User logged out!", "success");
+            return redirect()->route("login");
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

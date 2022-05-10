@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\DataFromAPI\LedgerHeadAssign;
+use App\Console\Commands\LedgerHeadAmountUpdate;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         LedgerHeadAssign::class,
+        LedgerHeadAmountUpdate::class,
     ];
 
     /**
@@ -25,7 +27,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('ledgerHead:assign')->everyMinute();
+        // $schedule->command("ledgerHead:assign")->everyMinute();
+        $schedule->command("ledger_head_amount:update")->everyMinute();
     }
 
     /**
@@ -35,8 +38,8 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__ . "/Commands");
 
-        require base_path('routes/console.php');
+        require base_path("routes/console.php");
     }
 }

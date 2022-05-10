@@ -7,7 +7,7 @@
 @endpush
 @section('content')
   @include('backend.partial.preLoader')
-  @if (Request::routeIs('report.balance-sheet.transactions'))
+  @if (Request::routeIs('report.income.transactions'))
     <div class="row">
       <div class="col-md-12 col-12">
         <table class="table table-striped data-table-export">
@@ -26,7 +26,7 @@
                 <td>{{ $item->head->name }}</td>
                 <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
                 <td>
-                  <a href="{{ route('report.balance-sheet.particular.transacation', $item->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
+                  <a href="{{ route('report.income.particular.transacation', $item->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
                 </td>
                 <td>
                   @if ($item->particular->value == 'Dr')
@@ -43,7 +43,7 @@
             <tr>
               <td colspan="3">
                 <label for="">Closing Balance:
-                  <b>{{ $transactions->where('particular', App\Enums\ParticularType::Debit)->sum('amount') -$transactions->where('particular', App\Enums\ParticularType::Credit)->sum('amount') }}</b></label>
+                  <b>{{ $transactions->where('particular', App\Enums\ParticularType::Credit)->sum('amount') - $transactions->where('particular', App\Enums\ParticularType::Debit)->sum('amount') }}</b></label>
               </td>
               <td>
                 {{ $transactions->where('particular', App\Enums\ParticularType::Debit)->sum('amount') }}

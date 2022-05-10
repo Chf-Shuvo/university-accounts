@@ -21,7 +21,6 @@ class User extends Authenticatable implements Auditable
     }
     public function getCompanyLastEntryDateAttribute()
     {
-        $company = Company::find($this->company);
-        return Carbon::parse($company->last_entry_date)->format('d M Y');
+        return Company::find($this->company)->last_entry_date;
     }
 }

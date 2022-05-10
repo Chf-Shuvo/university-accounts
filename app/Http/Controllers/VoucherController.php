@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\TransactionReports\Calculation;
 use Carbon\Carbon;
 use App\Models\Voucher;
 use App\Models\LedgerHead;
@@ -20,7 +21,10 @@ class VoucherController extends Controller
     {
         try {
             $vouchers = Voucher::all();
-            return view('backend.content.voucher.manage.index', compact('vouchers'));
+            return view(
+                "backend.content.voucher.manage.index",
+                compact("vouchers")
+            );
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -35,8 +39,8 @@ class VoucherController extends Controller
     public function store(Request $request)
     {
         try {
-            Voucher::firstOrCreate(['name' => $request->name]);
-            toast('Voucher created successfully', 'success');
+            Voucher::firstOrCreate(["name" => $request->name]);
+            toast("Voucher created successfully", "success");
             return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -52,7 +56,10 @@ class VoucherController extends Controller
     public function edit(Voucher $manage)
     {
         try {
-            return view('backend.content.voucher.manage.edit', compact('manage'));
+            return view(
+                "backend.content.voucher.manage.edit",
+                compact("manage")
+            );
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -68,9 +75,9 @@ class VoucherController extends Controller
     public function update(Request $request, Voucher $manage)
     {
         try {
-            $manage->update($request->except('_token', '_method'));
-            toast('Voucher type updated successfully', 'success');
-            return redirect()->route('voucher.manage.index');
+            $manage->update($request->except("_token", "_method"));
+            toast("Voucher type updated successfully", "success");
+            return redirect()->route("voucher.manage.index");
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -86,7 +93,7 @@ class VoucherController extends Controller
     {
         try {
             $manage->delete();
-            toast('Voucher type deleted successfully', 'success');
+            toast("Voucher type deleted successfully", "success");
             return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -96,9 +103,12 @@ class VoucherController extends Controller
     public function accounting_voucher_create()
     {
         try {
-            $ledgerHeads = LedgerHead::where('parent_id', '!=', 0)->get();
+            $ledgerHeads = LedgerHead::where("parent_id", "!=", 0)->get();
             $vouchers = Voucher::all();
-            return view('backend.content.voucher.transaction.create', compact('ledgerHeads', 'vouchers'));
+            return view(
+                "backend.content.voucher.transaction.create",
+                compact("ledgerHeads", "vouchers")
+            );
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -108,21 +118,25 @@ class VoucherController extends Controller
     {
         try {
             $transaction = Transaction::create([
-                'company_id' => auth()->user()->company,
-                'voucher_type' => $request->voucher_type,
-                'total_amount' => $request->total_amount,
-                'narration' => $request->narration,
-                'date' => Carbon::parse($request->date)->format('Y-m-d')
+                "company_id" => auth()->user()->company,
+                "voucher_type" => $request->voucher_type,
+                "total_amount" => $request->total_amount,
+                "narration" => $request->narration,
+                "date" => Carbon::parse($request->date)->format("Y-m-d"),
             ]);
             foreach ($request->account_type as $index => $account_type) {
+                $parents = Calculation::parents($request->particular[$index]);
+                $parents = json_encode($parents);
                 TransactionDetail::create([
-                    'transaction_id' => $transaction->id,
-                    'particular' => $account_type,
-                    'ledger_head' => $request->particular[$index],
-                    'amount' => $request->amount[$index],
+                    "transaction_id" => $transaction->id,
+                    "particular" => $account_type,
+                    "ledger_head" => $request->particular[$index],
+                    "amount" => $request->amount[$index],
+                    "date" => Carbon::parse($request->date)->format("Y-m-d"),
+                    "parents" => $parents,
                 ]);
             }
-            toast('Voucher created successfully!', 'success');
+            toast("Voucher created successfully!", "success");
             return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();

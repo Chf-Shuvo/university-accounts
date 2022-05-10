@@ -33,15 +33,15 @@
             <tr>
               <td>
                 @if ($item->has_child > 0)
-                  <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
+                  <a href="{{ route('report.income.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
                 @else
-                  <a href="{{ route('report.balance-sheet.transactions', $item->id) }}"><b>{{ $item->name }}</b></a>
+                  <a href="{{ route('report.income.transactions', $item->id) }}"><b>{{ $item->name }}</b></a>
                 @endif
               </td>
               <td>{{ $item->transaction_summary['openning'] }}</td>
               <td>{{ $item->transaction_summary['debit'] }}</td>
               <td>{{ $item->transaction_summary['credit'] }}</td>
-              <td>{{ $item->transaction_summary['closing'] }}</td>
+              <td>{{ -1 * $item->transaction_summary['closing'] }}</td>
             </tr>
           @endforeach
         </tbody>
