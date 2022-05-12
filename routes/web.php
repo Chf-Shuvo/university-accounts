@@ -118,6 +118,9 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
             "ledger-head.single"
         );
         Route::get("group-ledgers", "group_ledgers")->name("ledger-head.group");
+        Route::post("ledger-head/alias/create", "create_alias")->name(
+            "ledger-head.alias"
+        );
     });
     /**
      * ****************************************

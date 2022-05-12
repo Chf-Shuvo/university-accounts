@@ -15,9 +15,11 @@ class LedgerHeadController extends Controller
     public function index()
     {
         try {
-            $items = LedgerHead::where('company_id', auth()->user()->company)->orderBy('parent_id', 'asc')->get();
+            $items = LedgerHead::where("company_id", auth()->user()->company)
+                ->orderBy("parent_id", "asc")
+                ->get();
             // return $items;
-            return view('backend.content.ledgerHeads.index', compact('items'));
+            return view("backend.content.ledgerHeads.index", compact("items"));
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -34,16 +36,16 @@ class LedgerHeadController extends Controller
         try {
             // return $request;
             LedgerHead::firstOrCreate(
-                ['name' => $request->name],
+                ["name" => $request->name],
                 [
-                    'head_code' => $request->head_code,
-                    'parent_id' => $request->parent_id,
-                    'company_id' => auth()->user()->company,
-                    'name_of_group' => $request->name_of_group,
-                    'visibility_order' => $request->visibility_order
+                    "head_code" => $request->head_code,
+                    "parent_id" => $request->parent_id,
+                    "company_id" => auth()->user()->company,
+                    "name_of_group" => $request->name_of_group,
+                    "visibility_order" => $request->visibility_order,
                 ]
             );
-            toast()->success('Account Head Created');
+            toast()->success("Account Head Created");
             return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -60,7 +62,11 @@ class LedgerHeadController extends Controller
     {
         try {
             $items = LedgerHead::all();
-            return view('backend.content.ledgerHeads.edit', compact('ledgerHead', 'items'));
+            $ledgerHead->load("alias");
+            return view(
+                "backend.content.ledgerHeads.edit",
+                compact("ledgerHead", "items")
+            );
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -76,9 +82,9 @@ class LedgerHeadController extends Controller
     public function update(Request $request, LedgerHead $ledgerHead)
     {
         try {
-            $ledgerHead->update($request->except('_method', '_token'));
-            toast()->success('Account Head Updated');
-            return \redirect()->route('ledger-head.index');
+            $ledgerHead->update($request->except("_method", "_token"));
+            toast()->success("Account Head Updated");
+            return \redirect()->route("ledger-head.index");
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -94,7 +100,7 @@ class LedgerHeadController extends Controller
     {
         try {
             $ledgerHead->delete();
-            toast()->success('Account Head Removed');
+            toast()->success("Account Head Removed");
             return redirect()->back();
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -104,9 +110,9 @@ class LedgerHeadController extends Controller
     public function single_ledgers()
     {
         try {
-            $items = LedgerHead::orderBy('parent_id', 'asc')->get();
-            $items = $items->where('has_child', 0);
-            return view('backend.content.ledgerHeads.index', compact('items'));
+            $items = LedgerHead::orderBy("parent_id", "asc")->get();
+            $items = $items->where("has_child", 0);
+            return view("backend.content.ledgerHeads.index", compact("items"));
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -115,10 +121,36 @@ class LedgerHeadController extends Controller
     public function group_ledgers()
     {
         try {
-            $items = LedgerHead::orderBy('parent_id', 'asc')->get();
-            $items = $items->where('has_child', '!=', 0);
+            $items = LedgerHead::orderBy("parent_id", "asc")->get();
+            $items = $items->where("has_child", "!=", 0);
             // return $items;
-            return view('backend.content.ledgerHeads.index', compact('items'));
+            return view("backend.content.ledgerHeads.index", compact("items"));
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+    // create alias
+    public function create_alias(Request $request)
+    {
+        try {
+            $main_ledger = LedgerHead::find($request->alias_of);
+            LedgerHead::updateOrCreate(
+                [
+                    "name" => $request->alias_name,
+                    "alias_of" => $request->alias_of,
+                ],
+                [
+                    "head_code" => $main_ledger->head_code,
+                    "parent_id" => $main_ledger->parent_id,
+                    "company_id" => auth()->user()->company,
+                    "name_of_group" => $main_ledger->name_of_group,
+                ]
+            );
+            $all_alias = LedgerHead::where(
+                "alias_of",
+                $request->alias_of
+            )->get();
+            return view("backend.fetch.ledger.alias", compact("all_alias"));
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

@@ -22,6 +22,7 @@
           </tr>
           <tr>
             <th>Particulars</th>
+            <th>Alias Ledgers</th>
             <th>Opening Balance</th>
             <th>Debit</th>
             <th>Credit</th>
@@ -37,6 +38,13 @@
                 @else
                   <a href="{{ route('report.balance-sheet.transactions', $item->id) }}"><b>{{ $item->name }}</b></a>
                 @endif
+              </td>
+              <td>
+                <ul>
+                  @foreach ($item->alias as $alias_ledger)
+                    <li>{{ $alias_ledger->name }}</li>
+                  @endforeach
+                </ul>
               </td>
               <td>{{ $item->transaction_summary['openning'] }}</td>
               <td>{{ $item->transaction_summary['debit'] }}</td>

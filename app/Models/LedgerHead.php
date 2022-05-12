@@ -33,6 +33,11 @@ class LedgerHead extends Model
         return $childs->particulars->count();
     }
 
+    public function alias()
+    {
+        return $this->hasMany(LedgerHead::class, "alias_of", "id");
+    }
+
     protected $casts = [
         "name_of_group" => NameOfGroup::class,
     ];

@@ -48,7 +48,8 @@ class AccountingReportController extends Controller
     {
         try {
             $particular = LedgerHead::with(
-                "particulars:parent_id,id,name"
+                "particulars:parent_id,id,name,alias_of",
+                "particulars.alias"
             )->find($ledgerHead);
             foreach ($particular->particulars as $ledger) {
                 $transaction_summary = Calculation::calculate_summary(
@@ -57,7 +58,11 @@ class AccountingReportController extends Controller
                 $ledger->transaction_summary = $transaction_summary;
                 // return $ledger;
             }
-            // return $particular;
+            $particular->particulars = $particular->particulars->filter(
+                function ($item) {
+                    return $item->alias_of == null;
+                }
+            );
             return view(
                 "backend.content.report.balanceSheet.particulars",
                 compact("particular")
