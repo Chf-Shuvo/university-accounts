@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\LedgerHeadAmount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -9,6 +8,7 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\LedgerHeadController;
 use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\user\UserSettingController;
+use App\Helper\BAIUST_API\StudentRelated\Information;
 use App\Http\Controllers\user\UserPermissionController;
 
 /**
@@ -17,28 +17,7 @@ use App\Http\Controllers\user\UserPermissionController;
  * ***********************
  */
 Route::get("test", function () {
-    $ledger_parents = LedgerHeadAmount::select("parent_id")
-        ->where("parent_id", "!=", "0")
-        ->distinct("parent_id")
-        ->pluck("parent_id");
-    // return $ledger_parents;
-    foreach ($ledger_parents as $parent) {
-        $total_amount = LedgerHeadAmount::with("parent")
-            ->select("parent_id", "dr", "cr")
-            ->where("parent_id", $parent)
-            ->get();
-        // return $total_amount->sum("dr");
-        LedgerHeadAmount::updateOrCreate(
-            ["ledger_head" => $parent],
-            [
-                "parent_id" => $total_amount->first()->parent->parent_id,
-                "dr" => $total_amount->sum("dr"),
-                "cr" => $total_amount->sum("cr"),
-            ]
-        );
-        // return $total_amount;
-    }
-    return "done";
+    return Information::all_student();
 });
 /**
  * *********************************************

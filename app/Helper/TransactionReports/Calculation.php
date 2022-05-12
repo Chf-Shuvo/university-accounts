@@ -82,9 +82,7 @@ class Calculation
                     ->orWhere("parents", "like", "%" . $head . "," . "%")
                     ->get();
             } else {
-                $transactions = TransactionDetail::with('transaction')->where("ledger_head", $head)
-                    ->whereBetween("date", [$start_date, $end_date])
-                    ->get();
+                $transactions = TransactionDetail::with('transaction')->where("ledger_head", $head)->get();
             }
             if ($transactions->isEmpty()) {
                 $transaction_summary = [

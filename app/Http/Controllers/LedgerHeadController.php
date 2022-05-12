@@ -32,7 +32,7 @@ class LedgerHeadController extends Controller
     public function store(Request $request)
     {
         try {
-            return $request;
+            // return $request;
             LedgerHead::firstOrCreate(
                 ['name' => $request->name],
                 [
