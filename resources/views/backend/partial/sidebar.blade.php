@@ -37,64 +37,81 @@
         <li>
           <div class="dropdown-divider"></div>
         </li>
+
         {{-- Accounting Functionalites Menu --}}
         {{-- 1. Masters --}}
-        <li class="dropdown">
-          <a href="javascript:;" class="dropdown-toggle">
-            <span class="micon dw dw-analytics-19"></span><span class="mtext">Masters</span>
+        <li>
+          <div class="sidebar-small-cap">Masters</div>
+        </li>
+        <li>
+          <a href="#" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span><span class="mtext">Accounts Info</span>
           </a>
-          <ul class="submenu">
-            <li>
-              <a href="{{ route('voucher.manage.index') }}" class="{{ Request::routeIs('voucher.manage.*') ? 'active' : '' }}">Voucher
-                Types</a>
-            </li>
-            <li>
-              <a href="{{ route('ledger-head.index') }}" class="{{ Request::routeIs('ledger-head.*') ? 'active' : '' }}">Ledgers
-              </a>
-            </li>
-          </ul>
+        </li>
+        <li>
+          <a href="#" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span><span class="mtext">Payroll Info</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('voucher.manage.index') }}" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span>
+            <span class="mtext">Voucher Types</span></a>
+        </li>
+        <li>
+          <a href="{{ route('ledger-head.index') }}" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span>
+            <span class="mtext">Ledgers</span></a>
         </li>
         {{-- 2. Transactions --}}
-        <li class="dropdown">
-          <a href="javascript:;" class="dropdown-toggle">
-            <span class="micon dw dw-calculator"></span><span class="mtext">Transactions</span>
-          </a>
-          <ul class="submenu">
-            <li>
-              <a href="{{ route('voucher.accounting.create') }}" class="{{ Request::routeIs('voucher.accounting.*') ? 'active' : '' }}">
-                Accounting
-                Vouchers
-              </a>
-            </li>
-            <li>
-              <a href="javascript:void(0)" class="">
-                Payroll Vouchers
-              </a>
-            </li>
-          </ul>
+        <li>
+          <div class="dropdown-divider"></div>
+        </li>
+        <li>
+          <div class="sidebar-small-cap">Transactions</div>
+        </li>
+        <li>
+          <div class="dropdown-divider"></div>
+        </li>
+        <li>
+          <a href="{{ route('voucher.accounting.create') }}" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span>
+            <span class="mtext"> Accounting
+              Vouchers</span></a>
         </li>
         {{-- 3. Reports --}}
-        <li class="dropdown">
-          <a href="javascript:;" class="dropdown-toggle">
-            <span class="micon dw dw-invoice"></span><span class="mtext">Reports</span>
-          </a>
-          <ul class="submenu">
-            <li>
-              <a href="{{ route('report.balance-sheet.index') }}" class="{{ Request::routeIs('report.balance-sheet.*') ? 'active' : '' }}">
-                Balance Sheet
-              </a>
-            </li>
-            <li>
-              <a href="{{ route('report.income.index') }}" class="{{ Request::routeIs('report.income.*') ? 'active' : '' }}">
-                Income & Expense A/C
-              </a>
-            </li>
-            <li>
-              <a href="#" class="">
-                Display
-              </a>
-            </li>
-          </ul>
+        <li>
+          <div class="dropdown-divider"></div>
+        </li>
+        <li>
+          <div class="sidebar-small-cap">Reports</div>
+        </li>
+        <li>
+          <div class="dropdown-divider"></div>
+        </li>
+        <li>
+          <a href="{{ route('report.balance-sheet.index') }}" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span>
+            <span class="mtext">Balance Sheet</span></a>
+        </li>
+        <li>
+          <a href="{{ route('report.income.index') }}" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span>
+            <span class="mtext"> Income & Expense A/C</span></a>
+        </li>
+        <li>
+          <div class="dropdown-divider"></div>
+        </li>
+        <li>
+          <div class="sidebar-small-cap">Reports <i class="icon-copy dw dw-right-chevron"></i> Display</div>
+        </li>
+        <li>
+          <div class="dropdown-divider"></div>
+        </li>
+        <li>
+          <a href="{{ route('report.display.ledger') }}" class="dropdown-toggle no-arrow">
+            <span class="micon dw dw-invoice"></span>
+            <span class="mtext">Ledger</span></a>
         </li>
       </ul>
     </div>

@@ -1,10 +1,17 @@
 <?php
 
+use Carbon\Carbon;
+use App\Models\LedgerHead;
+use App\Models\Transaction;
+use App\Models\TransactionDetail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\VoucherController;
+use App\Helper\TransactionReports\Calculation;
 use App\Http\Controllers\LedgerHeadController;
 use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\user\UserSettingController;
@@ -13,11 +20,82 @@ use App\Http\Controllers\user\UserPermissionController;
 
 /**
  * ***********************
- * Test Routes
+ * Tool Routes
  * ***********************
  */
+Route::get("clear", function () {
+    Artisan::call("optimize:clear");
+    return "Cache Cleared";
+});
 Route::get("test", function () {
-    return Information::all_student();
+    $current_semester = Http::withToken(
+        "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
+        "Bearer"
+    )->get("https://api.baiust.edu.bd/api/v.1/student/current-semester");
+    $current_semester = json_decode($current_semester);
+    $current_semester = $current_semester->title;
+    $students = json_decode(
+        Http::withToken(
+            "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
+            "Bearer"
+        )->get("https://api.baiust.edu.bd/api/v.1/student/list/LLB/Spring-2022")
+    );
+    // return count($students);
+    // foreach ($students as $student) {
+    // return $student;
+    $student_for_receivable = [
+        "student_id" => "0822210208131044",
+        "session" => $current_semester,
+    ];
+    $receivables = Http::withToken(
+        "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
+        "Bearer"
+    )->post(
+        "https://api.baiust.edu.bd/api/v.1/student/accounts/receivable",
+        $student_for_receivable
+    );
+    $receivables = json_decode($receivables);
+    // return $receivables;
+    if ($receivables) {
+        $total = array_sum(array_column($receivables, "amount"));
+
+        $transaction = Transaction::create([
+            "company_id" => auth()->user()->company,
+            "voucher_type" => 1,
+            "total_amount" => $total,
+            "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
+        ]);
+        $ledger_head_student = LedgerHead::where(
+            "name",
+            $student_for_receivable["student_id"]
+        )->first()->id;
+        $parents_student = json_encode(
+            Calculation::parents($ledger_head_student)
+        );
+        TransactionDetail::create([
+            "transaction_id" => $transaction->id,
+            "particular" => "Dr",
+            "ledger_head" => $ledger_head_student,
+            "amount" => $total,
+            "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
+            "parents" => $parents_student,
+        ]);
+        foreach ($receivables as $receivable) {
+            $ledger_head = Information::get_ledger_head($receivable->fee_id);
+            $parents = Calculation::parents($ledger_head);
+            $parents = json_encode($parents);
+            TransactionDetail::create([
+                "transaction_id" => $transaction->id,
+                "particular" => "Cr",
+                "ledger_head" => $ledger_head,
+                "amount" => $receivable->amount,
+                "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
+                "parents" => $parents,
+            ]);
+        }
+        // }
+    }
+    return "test done";
 });
 /**
  * *********************************************
@@ -174,6 +252,17 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
                         "particular/transaction/details/{transaction_id}",
                         "particular_transaction_details"
                     )->name("particular.transacation");
+                }
+            );
+            Route::group(
+                ["prefix" => "display", "as" => "display."],
+                function () {
+                    Route::get("ledger/accounts", "display_ledger")->name(
+                        "ledger"
+                    );
+                    Route::get("ledgers", "display_get_ledgers")->name(
+                        "ledger.get"
+                    );
                 }
             );
         });

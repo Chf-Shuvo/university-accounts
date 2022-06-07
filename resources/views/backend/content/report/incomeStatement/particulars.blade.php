@@ -13,7 +13,7 @@
       <table class="data-table-export table table-striped">
         <thead>
           <tr>
-            <th colspan="4"></th>
+            <th colspan="3"></th>
             <th class="text-center">{{ $particular->name }} <br>
               {{ auth()->user()->company_name }} <br>
               <a href="javascript:void(0)" class="btn btn-primary" data-toggle="modal" data-target="#dateModal">From {{ Carbon\Carbon::parse(Calculation::start_date())->format('d/m/Y') }} To
@@ -22,7 +22,6 @@
           </tr>
           <tr>
             <th>Particulars</th>
-            <th>Opening Balance</th>
             <th>Debit</th>
             <th>Credit</th>
             <th>Closing Balance</th>
@@ -38,7 +37,6 @@
                   <a href="{{ route('report.income.transactions', $item->id) }}"><b>{{ $item->name }}</b></a>
                 @endif
               </td>
-              <td>{{ $item->transaction_summary['openning'] }}</td>
               <td>{{ $item->transaction_summary['debit'] }}</td>
               <td>{{ $item->transaction_summary['credit'] }}</td>
               <td>{{ -1 * $item->transaction_summary['closing'] }}</td>

@@ -7,6 +7,7 @@ use App\Enums\ParticularType;
 use App\Helper\TransactionReports\Calculation;
 use App\Models\LedgerHead;
 use App\Models\TransactionDetail;
+use Illuminate\Http\Request;
 
 class AccountingReportController extends Controller
 {
@@ -32,7 +33,7 @@ class AccountingReportController extends Controller
                 "company_id",
                 auth()->user()->company
             )
-                ->where("name_of_group", "Liability")
+                ->where("name_of_group", NameOfGroup::Liabilities)
                 ->orderBy("visibility_order", "asc")
                 ->get();
             return view(
@@ -63,6 +64,7 @@ class AccountingReportController extends Controller
                     return $item->alias_of == null;
                 }
             );
+            // return $particular;
             return view(
                 "backend.content.report.balanceSheet.particulars",
                 compact("particular")
@@ -75,7 +77,13 @@ class AccountingReportController extends Controller
     public function get_transactions($ledgerHead)
     {
         try {
+            $ledgerHead = LedgerHead::where("name", $ledgerHead)->first()->id;
             $transactions = Calculation::calculate($ledgerHead);
+            $transactions = $transactions->filter(function ($query) use (
+                $ledgerHead
+            ) {
+                return $query->ledger_head != $ledgerHead;
+            });
             $ledgerHead = LedgerHead::find($ledgerHead);
             return view(
                 "backend.content.report.balanceSheet.transactions",
@@ -100,6 +108,33 @@ class AccountingReportController extends Controller
                 "backend.content.report.balanceSheet.transactions",
                 compact("transactions")
             );
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+    /**
+     * ***********************
+     * Display Section
+     * ***********************
+     */
+    public function display_ledger()
+    {
+        try {
+            return view("backend.content.report.display.ledger");
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function display_get_ledgers(Request $request)
+    {
+        try {
+            $ledgerHeads = LedgerHead::where(
+                "name",
+                "like",
+                "%" . $request->keyword . "%"
+            )->pluck("name");
+            return $ledgerHeads;
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -132,7 +167,7 @@ class AccountingReportController extends Controller
                 "company_id",
                 auth()->user()->company
             )
-                ->where("name_of_group", "Liability")
+                ->where("name_of_group", NameOfGroup::Expense)
                 ->orderBy("visibility_order", "asc")
                 ->get();
             return view(

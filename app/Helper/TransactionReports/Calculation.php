@@ -38,8 +38,8 @@ class Calculation
     public static function calculate($ledgerHead)
     {
         try {
-            $start_date = Carbon::createFromFormat('Y-m-d', self::start_date());
-            $end_date = Carbon::createFromFormat('Y-m-d', self::end_date());
+            $start_date = Carbon::createFromFormat("Y-m-d", self::start_date());
+            $end_date = Carbon::createFromFormat("Y-m-d", self::end_date());
 
             $company_transactions = TransactionDetail::with(
                 "company_transactions"
@@ -55,7 +55,6 @@ class Calculation
                 "head",
                 "transaction.voucher"
             )
-                ->where("ledger_head", $ledgerHead)
                 ->whereIn("transaction_id", $transactionIDs)
                 ->get();
             return $transactions;
@@ -67,22 +66,23 @@ class Calculation
     public static function calculate_summary($head)
     {
         try {
-            $root_date = Carbon::createFromFormat('Y-m-d', self::root_date());
-            $start_date = Carbon::createFromFormat('Y-m-d', self::start_date())->subDay();
-            $end_date = Carbon::createFromFormat('Y-m-d', self::end_date());
+            $root_date = Carbon::createFromFormat("Y-m-d", self::root_date());
+            $start_date = Carbon::createFromFormat(
+                "Y-m-d",
+                self::start_date()
+            )->subDay();
+            $end_date = Carbon::createFromFormat("Y-m-d", self::end_date());
 
             // dd($start_date);
             $ledgerHead = LedgerHead::find($head);
             if ($ledgerHead->has_child > 0) {
-                $transactions = TransactionDetail::with('transaction')->where(
-                    "parents",
-                    "like",
-                    "%" . "," . $head . "," . "%"
-                )
-                    ->orWhere("parents", "like", "%" . $head . "," . "%")
+                $transactions = TransactionDetail::with("transaction")
+                    ->where("parents", "like", "%" . "," . $head . "," . "%")
                     ->get();
             } else {
-                $transactions = TransactionDetail::with('transaction')->where("ledger_head", $head)->get();
+                $transactions = TransactionDetail::with("transaction")
+                    ->where("ledger_head", $head)
+                    ->get();
             }
             if ($transactions->isEmpty()) {
                 $transaction_summary = [
@@ -100,12 +100,19 @@ class Calculation
                 // from root date to root end date calculation
                 $root_debit = 0;
                 $root_credit = 0;
-                $balance  = 0;
+                $balance = 0;
                 // regular amount calculation
                 foreach ($transactions as $transaction) {
-                    $transaction_date = Carbon::createFromFormat('Y-m-d', $transaction->date);
+                    $transaction_date = Carbon::createFromFormat(
+                        "Y-m-d",
+                        $transaction->date
+                    );
 
-                    if ($transaction_date->between($start_date, $end_date) && $transaction->transaction->company_id == auth()->user()->company) {
+                    if (
+                        $transaction_date->between($start_date, $end_date) &&
+                        $transaction->transaction->company_id ==
+                            auth()->user()->company
+                    ) {
                         if ($transaction->particular == ParticularType::Debit) {
                             $debit = $debit + $transaction->amount;
                         } else {
@@ -117,12 +124,27 @@ class Calculation
                 if ($start_date->gt($root_date)) {
                     $root_end_date = $start_date->subDay();
                     foreach ($transactions as $transaction) {
-                        $transaction_date = Carbon::createFromFormat('Y-m-d', $transaction->date);
-                        if ($transaction_date->between($root_date, $root_end_date) && $transaction->transaction->company_id == auth()->user()->company) {
-                            if ($transaction->particular == ParticularType::Debit) {
-                                $root_debit = $root_debit + $transaction->amount;
+                        $transaction_date = Carbon::createFromFormat(
+                            "Y-m-d",
+                            $transaction->date
+                        );
+                        if (
+                            $transaction_date->between(
+                                $root_date,
+                                $root_end_date
+                            ) &&
+                            $transaction->transaction->company_id ==
+                                auth()->user()->company
+                        ) {
+                            if (
+                                $transaction->particular ==
+                                ParticularType::Debit
+                            ) {
+                                $root_debit =
+                                    $root_debit + $transaction->amount;
                             } else {
-                                $root_credit = $root_credit + $transaction->amount;
+                                $root_credit =
+                                    $root_credit + $transaction->amount;
                             }
                             $balance = $root_debit - $root_credit;
                             $openning = $openning + $balance;
@@ -160,7 +182,7 @@ class Calculation
         try {
             $head = LedgerHead::find($head);
             if ($head->parent_id != 0) {
-                array_push(self::$parents, $head->parent_id . ',');
+                array_push(self::$parents, "," . $head->parent_id . ",");
             }
             // recursive parent allocation
             if ($head->parent_id != 0) {

@@ -4,7 +4,6 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\DataFromAPI\LedgerHeadAssign;
-use App\Console\Commands\LedgerHeadAmountUpdate;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -14,10 +13,7 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [
-        LedgerHeadAssign::class,
-        LedgerHeadAmountUpdate::class,
-    ];
+    protected $commands = [LedgerHeadAssign::class];
 
     /**
      * Define the application's command schedule.
@@ -27,8 +23,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command("ledgerHead:assign")->everyMinute();
-        $schedule->command("ledger_head_amount:update")->everyMinute();
+        $schedule->command("ledgerHead:assign")->everyThirtyMinutes();
     }
 
     /**

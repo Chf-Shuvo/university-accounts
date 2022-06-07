@@ -103,8 +103,14 @@ class VoucherController extends Controller
     public function accounting_voucher_create()
     {
         try {
-            $ledgerHeads = LedgerHead::where("parent_id", "!=", 0)->get();
+            $ledgerHeads = LedgerHead::with("alias")
+                ->where("parent_id", "!=", 0)
+                ->get();
             $vouchers = Voucher::all();
+            $ledgerHeads->filter(function ($item) {
+                return $item->has_child < 1;
+            });
+            // return $ledgerHeads;
             return view(
                 "backend.content.voucher.transaction.create",
                 compact("ledgerHeads", "vouchers")

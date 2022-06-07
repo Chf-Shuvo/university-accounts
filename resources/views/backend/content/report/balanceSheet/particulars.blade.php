@@ -10,50 +10,52 @@
   {{-- @include('backend.partial.preLoader') --}}
   <div class="row mt-5">
     <div class="col-md-12 col-12">
-      <table class="data-table-export table table-striped">
-        <thead>
-          <tr>
-            <th colspan="4"></th>
-            <th class="text-center">{{ $particular->name }} <br>
-              {{ auth()->user()->company_name }} <br>
-              <a href="javascript:void(0)" class="btn btn-primary" data-toggle="modal" data-target="#dateModal">From {{ Carbon\Carbon::parse(Calculation::start_date())->format('d/m/Y') }} To
-                {{ Carbon\Carbon::parse(Calculation::end_date())->format('d/m/Y') }}</a>
-            </th>
-          </tr>
-          <tr>
-            <th>Particulars</th>
-            <th>Alias Ledgers</th>
-            <th>Opening Balance</th>
-            <th>Debit</th>
-            <th>Credit</th>
-            <th>Closing Balance</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach ($particular->particulars as $item)
+      <div class="pd-20 card-box height-100-p">
+        <table class="data-table-export table table-striped">
+          <thead>
             <tr>
-              <td>
-                @if ($item->has_child > 0)
-                  <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
-                @else
-                  <a href="{{ route('report.balance-sheet.transactions', $item->id) }}"><b>{{ $item->name }}</b></a>
-                @endif
-              </td>
-              <td>
-                <ul>
-                  @foreach ($item->alias as $alias_ledger)
-                    <li>{{ $alias_ledger->name }}</li>
-                  @endforeach
-                </ul>
-              </td>
-              <td>{{ $item->transaction_summary['openning'] }}</td>
-              <td>{{ $item->transaction_summary['debit'] }}</td>
-              <td>{{ $item->transaction_summary['credit'] }}</td>
-              <td>{{ $item->transaction_summary['closing'] }}</td>
+              <th colspan="4"></th>
+              <th class="text-center">{{ $particular->name }} <br>
+                {{ auth()->user()->company_name }} <br>
+                <a href="javascript:void(0)" class="btn btn-primary" data-toggle="modal" data-target="#dateModal">From {{ Carbon\Carbon::parse(Calculation::start_date())->format('d/m/Y') }} To
+                  {{ Carbon\Carbon::parse(Calculation::end_date())->format('d/m/Y') }}</a>
+              </th>
             </tr>
-          @endforeach
-        </tbody>
-      </table>
+            <tr>
+              <th>Particulars</th>
+              <th>Alias Ledgers</th>
+              <th>Opening Balance</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Closing Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach ($particular->particulars as $item)
+              <tr>
+                <td>
+                  @if ($item->has_child > 0)
+                    <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
+                  @else
+                    <a href="{{ route('report.balance-sheet.transactions', $item->name) }}"><b>{{ $item->name }}</b></a>
+                  @endif
+                </td>
+                <td>
+                  <ul>
+                    @foreach ($item->alias as $alias_ledger)
+                      <li>{{ $alias_ledger->name }}</li>
+                    @endforeach
+                  </ul>
+                </td>
+                <td>{{ $item->transaction_summary['openning'] }}</td>
+                <td>{{ $item->transaction_summary['debit'] }}</td>
+                <td>{{ $item->transaction_summary['credit'] }}</td>
+                <td>{{ $item->transaction_summary['closing'] }}</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   {{-- modal --}}

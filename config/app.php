@@ -1,6 +1,7 @@
 <?php
 
 use App\Helper\TransactionReports\Calculation;
+use Carbon\Carbon;
 
 return [
     /*
@@ -201,6 +202,7 @@ return [
         "Cookie" => Illuminate\Support\Facades\Cookie::class,
         "Crypt" => Illuminate\Support\Facades\Crypt::class,
         "Calculation" => Calculation::class,
+        "Carbon" => Carbon::class,
         "Date" => Illuminate\Support\Facades\Date::class,
         "DB" => Illuminate\Support\Facades\DB::class,
         "Eloquent" => Illuminate\Database\Eloquent\Model::class,
