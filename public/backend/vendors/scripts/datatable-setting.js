@@ -23,6 +23,27 @@ $("document").ready(function () {
             },
         },
     });
+    $(".data-table-no-pagination").DataTable({
+        scrollCollapse: true,
+        autoWidth: false,
+        responsive: true,
+        paging: false,
+        aaSorting: [],
+        columnDefs: [
+            {
+                targets: "datatable-nosort",
+                orderable: false,
+            },
+        ],
+        language: {
+            info: "_START_-_END_ of _TOTAL_ entries",
+            searchPlaceholder: "Search",
+            paginate: {
+                next: '<i class="ion-chevron-right"></i>',
+                previous: '<i class="ion-chevron-left"></i>',
+            },
+        },
+    });
 
     $(".data-table-export").DataTable({
         scrollCollapse: true,

@@ -129,12 +129,17 @@ class AccountingReportController extends Controller
     public function display_get_ledgers(Request $request)
     {
         try {
-            $ledgerHeads = LedgerHead::where(
-                "name",
-                "like",
-                "%" . $request->keyword . "%"
-            )->pluck("name");
-            return $ledgerHeads;
+            $data_array = [];
+            $ledgerHeads = LedgerHead::select("head_code", "name")
+                ->where("name", "like", "%" . $request->keyword . "%")
+                ->get();
+            foreach ($ledgerHeads as $ledgerHead) {
+                array_push(
+                    $data_array,
+                    $ledgerHead->name . "-" . $ledgerHead->head_code
+                );
+            }
+            return $data_array;
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

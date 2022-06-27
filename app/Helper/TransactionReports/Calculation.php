@@ -166,28 +166,19 @@ class Calculation
     }
 
     public static $parents = [];
-    public static function parents($head)
+    public static function get_parents($head)
     {
         try {
-            self::get_parents($head);
-            $send_parents = self::$parents;
-            self::$parents = [];
-            return $send_parents;
-        } catch (\Throwable $th) {
-            return $th->getMessage();
-        }
-    }
-    private static function get_parents($head)
-    {
-        try {
-            $head = LedgerHead::find($head);
+            $head = LedgerHead::where("name", $head)->first();
             if ($head->parent_id != 0) {
                 array_push(self::$parents, "," . $head->parent_id . ",");
             }
             // recursive parent allocation
             if ($head->parent_id != 0) {
-                self::get_parents($head->parent_id);
+                $name = LedgerHead::find($head->parent_id)->name;
+                self::get_parents($name);
             }
+            return self::$parents;
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

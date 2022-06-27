@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LedgerHead;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 
 class LedgerHeadController extends Controller
 {
@@ -17,7 +18,7 @@ class LedgerHeadController extends Controller
         try {
             $items = LedgerHead::where("company_id", auth()->user()->company)
                 ->orderBy("parent_id", "asc")
-                ->get();
+                ->paginate(100);
             // return $items;
             return view("backend.content.ledgerHeads.index", compact("items"));
         } catch (\Exception $e) {
@@ -107,28 +108,36 @@ class LedgerHeadController extends Controller
         }
     }
     // single ledgers
-    public function single_ledgers()
+    public function ledgers_by_type($type)
     {
         try {
-            $items = LedgerHead::orderBy("parent_id", "asc")->get();
-            $items = $items->where("has_child", 0);
-            return view("backend.content.ledgerHeads.index", compact("items"));
+            if ($type == "single") {
+                $items = LedgerHead::where(
+                    "company_id",
+                    auth()->user()->company
+                )
+                    ->orderBy("parent_id", "asc")
+                    ->paginate(100);
+            } else {
+                $items = LedgerHead::where(
+                    "company_id",
+                    auth()->user()->company
+                )
+                    ->orderBy("parent_id", "asc")
+                    ->get();
+                $items = $items->filter(function ($item) {
+                    return $item->has_child > 0;
+                });
+            }
+            return view(
+                "backend.content.ledgerHeads.ledgersByType",
+                compact("items", "type")
+            );
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
     }
-    // group ledgers
-    public function group_ledgers()
-    {
-        try {
-            $items = LedgerHead::orderBy("parent_id", "asc")->get();
-            $items = $items->where("has_child", "!=", 0);
-            // return $items;
-            return view("backend.content.ledgerHeads.index", compact("items"));
-        } catch (\Throwable $th) {
-            return $th->getMessage();
-        }
-    }
+
     // create alias
     public function create_alias(Request $request)
     {

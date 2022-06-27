@@ -103,17 +103,17 @@ class VoucherController extends Controller
     public function accounting_voucher_create()
     {
         try {
-            $ledgerHeads = LedgerHead::with("alias")
-                ->where("parent_id", "!=", 0)
-                ->get();
+            // $ledgerHeads = LedgerHead::with("alias")
+            //     ->where("parent_id", "!=", 0)
+            //     ->get();
             $vouchers = Voucher::all();
-            $ledgerHeads->filter(function ($item) {
-                return $item->has_child < 1;
-            });
+            // $ledgerHeads->filter(function ($item) {
+            //     return $item->has_child < 1;
+            // });
             // return $ledgerHeads;
             return view(
                 "backend.content.voucher.transaction.create",
-                compact("ledgerHeads", "vouchers")
+                compact("vouchers")
             );
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -131,12 +131,17 @@ class VoucherController extends Controller
                 "date" => Carbon::parse($request->date)->format("Y-m-d"),
             ]);
             foreach ($request->account_type as $index => $account_type) {
-                $parents = Calculation::parents($request->particular[$index]);
+                $ledger_head_name = explode("-", $request->particular[$index]);
+                $parents = Calculation::get_parents($ledger_head_name[0]);
                 $parents = json_encode($parents);
+                $ledger_head_id = LedgerHead::where(
+                    "name",
+                    $ledger_head_name[0]
+                )->first()->id;
                 TransactionDetail::create([
                     "transaction_id" => $transaction->id,
                     "particular" => $account_type,
-                    "ledger_head" => $request->particular[$index],
+                    "ledger_head" => $ledger_head_id,
                     "amount" => $request->amount[$index],
                     "date" => Carbon::parse($request->date)->format("Y-m-d"),
                     "parents" => $parents,

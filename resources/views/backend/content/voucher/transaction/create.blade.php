@@ -1,6 +1,7 @@
 @extends('backend.layout.master')
 
 @push('css')
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.79/theme-default.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.4/sweetalert2.min.css">
 @endpush
@@ -20,7 +21,7 @@
           <div class="form-row">
             <div class="form-group col-md-12 col-12">
               <label for="">Period:</label>
-              <input type="text" name="date" class="form-control date-picker" autocomplete="off" id="entryPeriod" value="{{ Carbon::now()->format('Y-m-d') }}">
+              <input type="text" name="date" class="form-control date-picker" autocomplete="off" id="entryPeriod" value="">
             </div>
             <div class="form-group col-md-12 col-12">
               <label for="">Voucher Type Title:</label>
@@ -45,17 +46,9 @@
                       <option value="Dr" selected>Dr</option>
                       <option value="Cr">Cr</option>
                     </select></td>
-                  <td><select name="particular[]" id="" class="form-control ledgerSelect" style="width: 100%">
-                      <option></option>
-                      @foreach ($ledgerHeads as $head)
-                        <option value="{{ $head->id }}">{{ $head->name }}@if ($head->alias != null)
-                            @foreach ($head->alias as $alias_ledger)
-                              / {{ $alias_ledger->name }}
-                            @endforeach
-                          @endif
-                        </option>
-                      @endforeach
-                    </select></td>
+                  <td>
+                    <input name="particular[]" class="form-control" onkeyup="load_ledger_heads(event)">
+                  </td>
                   <td><input type="number" name="amount[]" placeholder="Amount" class="form-control amountField" value="0" onkeyup="amountCalculation()" /></td>
                 </tr>
                 <tr>
@@ -89,18 +82,11 @@
   @endsection
 
   @push('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.79/jquery.form-validator.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.4/sweetalert2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     {{-- page scripts --}}
-    <script>
-      $(document).ready(function() {
-        $.validate();
-        $(".ledgerSelect").select2({
-          placeholder: "Select....."
-        });
-      });
-    </script>
     {{-- row cloning --}}
     <script>
       $("#add").click(function(e) {
@@ -109,19 +95,12 @@
         let creditAmount = parseInt($("#creditAmount").text());
 
         if (debitAmount == 0 || creditAmount == 0 || debitAmount != creditAmount) {
-          $(".ledgerSelect").select2("destroy");
           $(".dataRow").eq(0).clone()
             .find("input")
             .val(0)
             .end()
             .show()
             .insertAfter(".dataRow:last");
-          $(".ledgerSelect").each(function() {
-            $(this).removeAttr('data-select2-id');
-            $(this).select2({
-              placeholder: "Select....."
-            });
-          });
         } else {
           Swal.fire({
             title: 'Debit/Credit Amount Matched!',
@@ -140,6 +119,23 @@
     </script>
     <script src="{{ asset('backend/custom/js/voucher_calculation.js') }}"></script>
     <script>
+      // load the ledgers
+      function load_ledger_heads(event) {
+        let keyword = event.target.value;
+        $.ajax({
+          type: "get",
+          url: "{{ route('report.display.ledger.get') }}",
+          data: {
+            "keyword": keyword
+          },
+          dataType: "json",
+          success: function(response) {
+            $(event.target).autocomplete({
+              source: response
+            });
+          }
+        });
+      }
       // function from voucher_calculation.js
       amountCalculation();
       // submit the form

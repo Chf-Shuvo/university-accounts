@@ -192,10 +192,12 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
             "show",
             "destroy"
         );
-        Route::get("single-ledgers", "single_ledgers")->name(
-            "ledger-head.single"
+        Route::get("ledger-head/{type}", "ledgers_by_type")->name(
+            "ledger-head.type"
         );
-        Route::get("group-ledgers", "group_ledgers")->name("ledger-head.group");
+        Route::get("ledger-head/type/data", "ledgers_by_type_data")->name(
+            "ledger-head.type.data"
+        );
         Route::post("ledger-head/alias/create", "create_alias")->name(
             "ledger-head.alias"
         );

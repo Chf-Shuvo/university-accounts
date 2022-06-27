@@ -12,8 +12,8 @@
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 mb-20 text-right">
       <div class="pd-20 card-box height-100-p">
-        <a href="{{ route('ledger-head.single') }}" class="btn btn-info btn-md">Single Ledgers</a>
-        <a href="{{ route('ledger-head.group') }}" class="btn btn-primary btn-md">Group Ledgers</a>
+        <a href="{{ route('ledger-head.type', 'single') }}" class="btn btn-info btn-md">Single Ledgers</a>
+        <a href="{{ route('ledger-head.type', 'group') }}" class="btn btn-primary btn-md">Group Ledgers</a>
         {{-- modal button --}}
         <a href="javascript:void(0)" class="btn btn-info btn-md" data-toggle="modal" data-target="#dataModal"><i class="icon-copy dw dw-add"></i> add new head</a>
       </div>
@@ -73,9 +73,14 @@
       </div>
     </div>
     {{-- modal ends --}}
+    <div class="col-lg-12 col-md-12 col-sm-12 my-3 d-flex justify-content-end">
+      <div class="pd-20 card-box height-100-p">
+        {{ $items->links() }}
+      </div>
+    </div>
     <div class="col-md-12 col-12">
       <div class="pd-20 card-box height-100-p">
-        <table class="data-table-export table stripe hover nowrap">
+        <table class="data-table-no-pagination table stripe hover nowrap">
           <thead>
             <tr>
               <th>Database ID</th>
