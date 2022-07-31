@@ -77,13 +77,16 @@ class AccountingReportController extends Controller
     public function get_transactions($ledgerHead)
     {
         try {
-            $ledgerHead = LedgerHead::where("name", $ledgerHead)->first()->id;
+            $ledgerHead = explode("-", $ledgerHead);
+            $ledgerHead = LedgerHead::where("name", $ledgerHead[0])->first()
+                ->id;
             $transactions = Calculation::calculate($ledgerHead);
-            $transactions = $transactions->filter(function ($query) use (
-                $ledgerHead
-            ) {
-                return $query->ledger_head != $ledgerHead;
-            });
+            $transactions = $transactions
+                ->filter(function ($query) use ($ledgerHead) {
+                    return $query->ledger_head == $ledgerHead;
+                })
+                ->values();
+            // return $transactions;
             $ledgerHead = LedgerHead::find($ledgerHead);
             return view(
                 "backend.content.report.balanceSheet.transactions",

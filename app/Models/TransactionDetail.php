@@ -4,26 +4,30 @@ namespace App\Models;
 
 use App\Enums\ParticularType;
 use Illuminate\Database\Eloquent\Model;
-use PDO;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class TransactionDetail extends Model
+class TransactionDetail extends Model implements Auditable
 {
-    protected $table = 'transaction_details';
-    protected $guarded = ['id'];
+    use \OwenIt\Auditing\Auditable;
+    protected $table = "transaction_details";
+    protected $guarded = ["id"];
     protected $casts = [
-        'particular' => ParticularType::class
+        "particular" => ParticularType::class,
     ];
 
     public function head()
     {
-        return $this->belongsTo(LedgerHead::class, 'ledger_head', 'id');
+        return $this->belongsTo(LedgerHead::class, "ledger_head", "id");
     }
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
+        return $this->belongsTo(Transaction::class, "transaction_id", "id");
     }
     public function company_transactions()
     {
-        return $this->transaction()->where('company_id', auth()->user()->company);
+        return $this->transaction()->where(
+            "company_id",
+            auth()->user()->company
+        );
     }
 }

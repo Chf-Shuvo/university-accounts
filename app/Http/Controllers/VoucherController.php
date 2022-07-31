@@ -132,7 +132,7 @@ class VoucherController extends Controller
             ]);
             foreach ($request->account_type as $index => $account_type) {
                 $ledger_head_name = explode("-", $request->particular[$index]);
-                $parents = Calculation::get_parents($ledger_head_name[0]);
+                $parents = Calculation::parents($ledger_head_name[0]);
                 $parents = json_encode($parents);
                 $ledger_head_id = LedgerHead::where(
                     "name",

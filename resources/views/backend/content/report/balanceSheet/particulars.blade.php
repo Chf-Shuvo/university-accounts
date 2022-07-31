@@ -8,19 +8,12 @@
 
 @section('content')
   {{-- @include('backend.partial.preLoader') --}}
+  @include('backend.partial.date_setter')
   <div class="row mt-5">
     <div class="col-md-12 col-12">
       <div class="pd-20 card-box height-100-p">
         <table class="data-table-export table table-striped">
           <thead>
-            <tr>
-              <th colspan="4"></th>
-              <th class="text-center">{{ $particular->name }} <br>
-                {{ auth()->user()->company_name }} <br>
-                <a href="javascript:void(0)" class="btn btn-primary" data-toggle="modal" data-target="#dateModal">From {{ Carbon\Carbon::parse(Calculation::start_date())->format('d/m/Y') }} To
-                  {{ Carbon\Carbon::parse(Calculation::end_date())->format('d/m/Y') }}</a>
-              </th>
-            </tr>
             <tr>
               <th>Particulars</th>
               <th>Alias Ledgers</th>
@@ -55,35 +48,6 @@
             @endforeach
           </tbody>
         </table>
-      </div>
-    </div>
-  </div>
-  {{-- modal --}}
-  <div class="modal fade dateModal" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="myLargeModalLabel" style="font-family: Inter, Bangla539, sans-serif;">Change Period</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        </div>
-        <div class="modal-body">
-          <form action="{{ route('period.change') }}" method="post">
-            @csrf
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="">From:</label>
-                <input type="text" class="form-control date-picker" name="from" autocomplete="off" required onkeydown="return false">
-              </div>
-              <div class="form-group col-md-6">
-                <label for="">To:</label>
-                <input type="text" class="form-control date-picker" name="to" autocomplete="off" required onkeydown="return false">
-              </div>
-              <div class="form-group col-md-12">
-                <button type="submit" class="btn btn-success float-right">submit</button>
-              </div>
-            </div>
-          </form>
-        </div>
       </div>
     </div>
   </div>

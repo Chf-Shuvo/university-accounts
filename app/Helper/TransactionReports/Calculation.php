@@ -38,8 +38,9 @@ class Calculation
     public static function calculate($ledgerHead)
     {
         try {
-            $start_date = Carbon::createFromFormat("Y-m-d", self::start_date());
-            $end_date = Carbon::createFromFormat("Y-m-d", self::end_date());
+            // return $ledgerHead;
+            $start_date = self::start_date();
+            $end_date = self::end_date();
 
             $company_transactions = TransactionDetail::with(
                 "company_transactions"
@@ -52,8 +53,8 @@ class Calculation
                 ->pluck("transaction_id");
             // return $transactionIDs;
             $transactions = TransactionDetail::with(
-                "head",
-                "transaction.voucher"
+                "transaction.voucher",
+                "transaction.details.head"
             )
                 ->whereIn("transaction_id", $transactionIDs)
                 ->get();
@@ -166,19 +167,29 @@ class Calculation
     }
 
     public static $parents = [];
-    public static function get_parents($head)
+    public static function parents($ledger_name)
     {
         try {
-            $head = LedgerHead::where("name", $head)->first();
-            if ($head->parent_id != 0) {
-                array_push(self::$parents, "," . $head->parent_id . ",");
+            self::get_parents($ledger_name);
+            $send_parents = self::$parents;
+            self::$parents = [];
+            return $send_parents;
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+    public static function get_parents($ledger_name)
+    {
+        try {
+            $ledger = LedgerHead::where("name", $ledger_name)->first();
+            if ($ledger->parent_id != 0) {
+                array_push(self::$parents, "," . $ledger->parent_id . ",");
             }
             // recursive parent allocation
-            if ($head->parent_id != 0) {
-                $name = LedgerHead::find($head->parent_id)->name;
+            if ($ledger->parent_id != 0) {
+                $name = LedgerHead::find($ledger->parent_id)->name;
                 self::get_parents($name);
             }
-            return self::$parents;
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

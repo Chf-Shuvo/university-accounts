@@ -1,7 +1,8 @@
 @extends('backend.layout.master')
 
 @section('content')
-  <div class="row">
+  @include('backend.partial.date_setter')
+  <div class="row mt-5">
     <div class="col-md-6 col-12">
       <div class="pd-20 card-box height-100-p">
         <table class="table table-borderless">

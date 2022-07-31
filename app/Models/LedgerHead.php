@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Enums\NameOfGroup;
 use App\Helper\TransactionReports\Calculation;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class LedgerHead extends Model
+class LedgerHead extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     protected $table = "ledger_heads";
     protected $guarded = ["id"];
     protected $appends = ["parent", "has_child"];

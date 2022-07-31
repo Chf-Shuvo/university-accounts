@@ -17,8 +17,8 @@ class LedgerHeadController extends Controller
     {
         try {
             $items = LedgerHead::where("company_id", auth()->user()->company)
-                ->orderBy("parent_id", "asc")
-                ->paginate(100);
+                ->latest()
+                ->paginate(500);
             // return $items;
             return view("backend.content.ledgerHeads.index", compact("items"));
         } catch (\Exception $e) {
@@ -35,12 +35,14 @@ class LedgerHeadController extends Controller
     public function store(Request $request)
     {
         try {
-            // return $request;
+            $input_parent = explode("-", $request->parent_ledger);
+            $parent_id = LedgerHead::where("name", $input_parent[0])->first()
+                ->id;
             LedgerHead::firstOrCreate(
                 ["name" => $request->name],
                 [
                     "head_code" => $request->head_code,
-                    "parent_id" => $request->parent_id,
+                    "parent_id" => $parent_id,
                     "company_id" => auth()->user()->company,
                     "name_of_group" => $request->name_of_group,
                     "visibility_order" => $request->visibility_order,
@@ -116,14 +118,14 @@ class LedgerHeadController extends Controller
                     "company_id",
                     auth()->user()->company
                 )
-                    ->orderBy("parent_id", "asc")
-                    ->paginate(100);
+                    ->latest()
+                    ->paginate(500);
             } else {
                 $items = LedgerHead::where(
                     "company_id",
                     auth()->user()->company
                 )
-                    ->orderBy("parent_id", "asc")
+                    ->latest()
                     ->get();
                 $items = $items->filter(function ($item) {
                     return $item->has_child > 0;

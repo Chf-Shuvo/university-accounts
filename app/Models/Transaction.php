@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Transaction extends Model
+class Transaction extends Model implements Auditable
 {
-    protected $table = 'transactions';
-    protected $guarded = ['id'];
+    use \OwenIt\Auditing\Auditable;
+    protected $table = "transactions";
+    protected $guarded = ["id"];
 
     public function details()
     {
@@ -16,6 +18,6 @@ class Transaction extends Model
 
     public function voucher()
     {
-        return $this->belongsTo(Voucher::class, 'voucher_type', 'id');
+        return $this->belongsTo(Voucher::class, "voucher_type", "id");
     }
 }

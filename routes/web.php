@@ -31,69 +31,73 @@ Route::get("test", function () {
     $current_semester = Http::withToken(
         "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
         "Bearer"
-    )->get("https://api.baiust.edu.bd/api/v.1/student/current-semester");
+    )->get("http://api.baiust.edu.bd/api/v.1/student/current-semester");
     $current_semester = json_decode($current_semester);
     $current_semester = $current_semester->title;
     $students = json_decode(
         Http::withToken(
             "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
             "Bearer"
-        )->get("https://api.baiust.edu.bd/api/v.1/student/list/LLB/Spring-2022")
+        )->get(
+            "https://api.baiust.edu.bd/api/v.1/student/list/English/Fall-2021"
+        )
     );
-    // return count($students);
-    // foreach ($students as $student) {
-    // return $student;
-    $student_for_receivable = [
-        "student_id" => "0822210208131044",
-        "session" => $current_semester,
-    ];
-    $receivables = Http::withToken(
-        "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
-        "Bearer"
-    )->post(
-        "https://api.baiust.edu.bd/api/v.1/student/accounts/receivable",
-        $student_for_receivable
-    );
-    $receivables = json_decode($receivables);
-    // return $receivables;
-    if ($receivables) {
-        $total = array_sum(array_column($receivables, "amount"));
-
-        $transaction = Transaction::create([
-            "company_id" => auth()->user()->company,
-            "voucher_type" => 1,
-            "total_amount" => $total,
-            "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
-        ]);
-        $ledger_head_student = LedgerHead::where(
-            "name",
-            $student_for_receivable["student_id"]
-        )->first()->id;
-        $parents_student = json_encode(
-            Calculation::parents($ledger_head_student)
+    // return $students;
+    foreach ($students as $student) {
+        // return $student;
+        $student_for_receivable = [
+            "student_id" => $student->Registration_Number,
+            "session" => $current_semester,
+        ];
+        return $receivables = Http::withToken(
+            "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
+            "Bearer"
+        )->post(
+            "https://api.baiust.edu.bd/api/v.1/student/accounts/receivable",
+            $student_for_receivable
         );
-        TransactionDetail::create([
-            "transaction_id" => $transaction->id,
-            "particular" => "Dr",
-            "ledger_head" => $ledger_head_student,
-            "amount" => $total,
-            "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
-            "parents" => $parents_student,
-        ]);
-        foreach ($receivables as $receivable) {
-            $ledger_head = Information::get_ledger_head($receivable->fee_id);
-            $parents = Calculation::parents($ledger_head);
-            $parents = json_encode($parents);
+        $receivables = json_decode($receivables);
+        $receivables;
+        if ($receivables) {
+            $total = array_sum(array_column($receivables, "amount"));
+            $ledger_head_student = LedgerHead::where(
+                "name",
+                $student_for_receivable["student_id"]
+            )->first()->id;
+            $parents_student = json_encode(
+                Calculation::parents($student_for_receivable["student_id"])
+            );
+            $transaction = Transaction::create([
+                "company_id" => 1,
+                "voucher_type" => 1,
+                "total_amount" => $total,
+                "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
+            ]);
             TransactionDetail::create([
                 "transaction_id" => $transaction->id,
-                "particular" => "Cr",
-                "ledger_head" => $ledger_head,
-                "amount" => $receivable->amount,
+                "particular" => "Dr",
+                "ledger_head" => $ledger_head_student, //its the database id of the ledger
+                "amount" => $total,
                 "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
-                "parents" => $parents,
+                "parents" => $parents_student,
             ]);
+            // return $parents_student;
+            foreach ($receivables as $receivable) {
+                $ledger_database_id = Information::get_ledger_database_id(
+                    $receivable->fee_id
+                );
+                $ledger = LedgerHead::find($ledger_database_id);
+                $parents = json_encode(Calculation::parents($ledger->name));
+                TransactionDetail::create([
+                    "transaction_id" => $transaction->id,
+                    "particular" => "Cr",
+                    "ledger_head" => $ledger->id,
+                    "amount" => $receivable->amount,
+                    "date" => Carbon::parse(Carbon::now())->format("Y-m-d"),
+                    "parents" => $parents,
+                ]);
+            }
         }
-        // }
     }
     return "test done";
 });

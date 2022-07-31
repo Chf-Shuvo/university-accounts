@@ -191,18 +191,22 @@ class Information
         }
     }
 
-    public static function get_ledger_head($fee_id_from_iumss)
+    public static function get_ledger_database_id($fee_id_from_iumss)
     {
-        if ($fee_id_from_iumss == "2") {
+        if ($fee_id_from_iumss == "1") {
+            return 2392;
+        } elseif ($fee_id_from_iumss == "2") {
             return 147;
-        } elseif ($fee_id_from_iumss == "9") {
-            return 896;
         } elseif ($fee_id_from_iumss == "3") {
             return 8;
+        } elseif ($fee_id_from_iumss == "5") {
+            return 2386;
         } elseif ($fee_id_from_iumss == "6") {
             return 898;
         } elseif ($fee_id_from_iumss == "8") {
             return 900;
+        } elseif ($fee_id_from_iumss == "9") {
+            return 896;
         } elseif ($fee_id_from_iumss == "10") {
             return 2385;
         } elseif ($fee_id_from_iumss == "11") {
@@ -215,8 +219,10 @@ class Information
             return 905;
         } elseif ($fee_id_from_iumss == "15") {
             return 906;
-        } else {
+        } elseif ($fee_id_from_iumss == "16") {
             return 907;
+        } else {
+            return 0;
         }
     }
 }

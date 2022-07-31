@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Voucher extends Model
+class Voucher extends Model implements Auditable
 {
-    protected $table = 'vouchers';
-    protected $guarded = ['id'];
+    use \OwenIt\Auditing\Auditable;
+    protected $table = "vouchers";
+    protected $guarded = ["id"];
 }

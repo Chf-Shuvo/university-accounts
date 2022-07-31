@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements Auditable
 {
-    use \OwenIt\Auditing\Auditable, HasRoles;
+    use \OwenIt\Auditing\Auditable, HasRoles, HasApiTokens;
     protected $table = "users";
     protected $guarded = ["id"];
     protected $appends = [
@@ -17,7 +18,7 @@ class User extends Authenticatable implements Auditable
         "company_address",
         "company_last_entry_date",
     ];
-
+    protected $hidden = ["password"];
     public function getCompanyNameAttribute()
     {
         $company = Company::find($this->company);

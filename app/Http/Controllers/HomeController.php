@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -32,8 +33,8 @@ class HomeController extends Controller
     {
         try {
             session()->put([
-                "start_date" => $request->from,
-                "end_date" => $request->to,
+                "start_date" => Carbon::parse($request->from)->format('Y-m-d'),
+                "end_date" => Carbon::parse($request->to)->format('Y-m-d'),
             ]);
             return redirect()->back();
         } catch (\Throwable $th) {

@@ -28,9 +28,35 @@
             </thead>
             <tbody>
               @foreach ($transactions as $item)
-                <tr>
+                @foreach ($item->transaction->details as $detail)
+                  @if ($ledgerHead->name != $detail->head->name)
+                    <tr>
+                      <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                      <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
+                      <td>
+                        <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
+                      </td>
+                      <td>
+                        @if ($detail->particular->value == 'Cr')
+                          {{ $detail->amount }}
+                        @endif
+                      </td>
+                      <td>
+                        @if ($detail->particular->value == 'Dr')
+                          {{ $detail->amount }}
+                        @endif
+                      </td>
+                    </tr>
+                  @endif
+                @endforeach
+
+                {{-- <tr>
                   <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
-                  <td>{{ $item->particular->value . ' ' . $item->head->name }}</td>
+                  @foreach ($item->transaction->details as $detail)
+                    @if ($detail->particular->value == 'Cr')
+                      <td>{{ $item->particular->value . ' ' . $item->head->name }}</td>
+                    @endif
+                  @endforeach
                   <td>
                     <a href="{{ route('report.balance-sheet.particular.transacation', $item->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
                   </td>
@@ -44,7 +70,7 @@
                       {{ $item->amount }}
                     @endif
                   </td>
-                </tr>
+                </tr> --}}
               @endforeach
               <tr>
                 <td colspan="3">
