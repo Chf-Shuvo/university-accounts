@@ -53,7 +53,7 @@ class Calculation
                 ->pluck("transaction_id");
             // return $transactionIDs;
             $transactions = TransactionDetail::with(
-                "transaction.voucher",
+                "transaction",
                 "transaction.details.head"
             )
                 ->whereIn("transaction_id", $transactionIDs)

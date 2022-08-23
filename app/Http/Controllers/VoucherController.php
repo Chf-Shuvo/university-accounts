@@ -153,4 +153,38 @@ class VoucherController extends Controller
             return $th->getMessage();
         }
     }
+    public function accounting_voucher_update(Request $request, $transaction_id)
+    {
+        try {
+            // return $request;
+            $total_amount = array_sum($request->credit_amount);
+            $all_amounts = array_merge(
+                $request->debit_amount,
+                $request->credit_amount
+            );
+            Transaction::where("id", $transaction_id)->update([
+                "total_amount" => $total_amount,
+            ]);
+            foreach ($request->particular as $index => $particular) {
+                TransactionDetail::where("id", $particular)->update([
+                    "amount" => $all_amounts[$index],
+                ]);
+            }
+            toast("Voucher Updated Successfully", "Success");
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    public function accounting_voucher_destroy($transaction_id)
+    {
+        try {
+            Transaction::destroy($transaction_id);
+            toast("Voucher deleted successfully", "Deleted");
+            return redirect()->route("report.balance-sheet.index");
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
 }

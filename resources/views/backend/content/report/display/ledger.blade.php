@@ -6,8 +6,9 @@
 @endpush
 
 @section('content')
+  @include('backend.partial.date_setter')
   @include('backend.partial.loading')
-  <div class="row">
+  <div class="row mt-5">
     <div class="col-lg-12 col-md-12 col-sm-12 mb-20">
       <div class="pd-20 card-box height-100-p">
         <div class="form-group">
@@ -57,7 +58,7 @@
           confirmButtonText: 'Okay!'
         })
       } else {
-        let url = "{{ route('report.balance-sheet.transactions', ':ledger_head') }}";
+        let url = "{{ route('report.display.transactions', ':ledger_head') }}";
         url = url.replace(':ledger_head', ledger_head);
         $.ajax({
           type: "get",

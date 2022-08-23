@@ -14,6 +14,7 @@ class TransactionDetail extends Model implements Auditable
     protected $casts = [
         "particular" => ParticularType::class,
     ];
+    protected $appends = ["voucher_type"];
 
     public function head()
     {
@@ -29,5 +30,10 @@ class TransactionDetail extends Model implements Auditable
             "company_id",
             auth()->user()->company
         );
+    }
+    public function getVoucherTypeAttribute()
+    {
+        $transaction = Transaction::find($this->transaction_id);
+        return Voucher::select("name")->find($transaction->voucher_type)->name;
     }
 }

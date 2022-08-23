@@ -15,32 +15,41 @@ class ReportController extends Controller
     {
         try {
             $ledger_head = LedgerHead::where("name", $student_id)->first();
-            $transactions = TransactionDetail::where(
-                "ledger_head",
-                $ledger_head->id
-            )->get();
-            if ($transactions->isEmpty()) {
-                return response()->json([
-                    "response" => "404",
-                ]);
-            } else {
-                $debit = 0;
-                $credit = 0;
-                $closing = 0;
-                foreach ($transactions as $transaction) {
-                    if ($transaction->particular == ParticularType::Debit) {
-                        $debit = $debit + $transaction->amount;
-                    } else {
-                        $credit = $credit + $transaction->amount;
+            if ($ledger_head) {
+                $transactions = TransactionDetail::where(
+                    "ledger_head",
+                    $ledger_head->id
+                )->get();
+                if ($transactions->isEmpty()) {
+                    return response()->json([
+                        "response" => "404",
+                    ]);
+                } else {
+                    $debit = 0;
+                    $credit = 0;
+                    $closing = 0;
+                    foreach ($transactions as $transaction) {
+                        if ($transaction->particular == ParticularType::Debit) {
+                            $debit = $debit + $transaction->amount;
+                        } else {
+                            $credit = $credit + $transaction->amount;
+                        }
                     }
+                    $closing = $debit - $credit;
+                    $transaction_summary = [
+                        "receivable" => $debit,
+                        "paid" => $credit,
+                        "closing_balance" => $closing,
+                    ];
                 }
-                $closing = $debit - $credit;
+            } else {
                 $transaction_summary = [
-                    "receivable" => $debit,
-                    "paid" => $credit,
-                    "closing_balance" => $closing,
+                    "receivable" => "Not Found",
+                    "paid" => "Not Found",
+                    "closing_balance" => "Not Found",
                 ];
             }
+
             return response()->json(
                 [
                     "summary" => $transaction_summary,

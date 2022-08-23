@@ -231,6 +231,14 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
                     Route::post("store", "accounting_voucher_store")->name(
                         "store"
                     );
+                    Route::get(
+                        "destroy/{transaction_id}",
+                        "accounting_voucher_destroy"
+                    )->name("destroy");
+                    Route::patch(
+                        "update/{transaction_id}",
+                        "accounting_voucher_update"
+                    )->name("update");
                 }
             );
         });
@@ -269,6 +277,10 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
                     Route::get("ledgers", "display_get_ledgers")->name(
                         "ledger.get"
                     );
+                    Route::get(
+                        "transactions/{ledgerHead}",
+                        "display_ledger_transactions"
+                    )->name("transactions");
                 }
             );
         });
@@ -295,6 +307,24 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
                     Route::get(
                         "particular/transaction/details/{transaction_id}",
                         "income_particular_transaction_details"
+                    )->name("particular.transacation");
+                }
+            );
+            Route::group(
+                ["prefix" => "expense", "as" => "expense."],
+                function () {
+                    Route::get("index", "expense_index")->name("index");
+                    Route::get(
+                        "particulars/{ledgerHead}",
+                        "expense_get_particulars"
+                    )->name("particurlars");
+                    Route::get(
+                        "transactions/{ledgerHead}",
+                        "expense_get_transactions"
+                    )->name("transactions");
+                    Route::get(
+                        "particular/transaction/details/{transaction_id}",
+                        "expense_particular_transaction_details"
                     )->name("particular.transacation");
                 }
             );
