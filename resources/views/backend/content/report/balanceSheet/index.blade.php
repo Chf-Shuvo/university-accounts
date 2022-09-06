@@ -8,15 +8,20 @@
         <table class="table table-borderless">
           <thead class="border border-dark rounded">
             <tr>
-              <th>Liabilities</th>
-              <th class="text-right">BAIUST <span>as at 1 July 2022</span></th>
+              <th>Liability</th>
             </tr>
           </thead>
           <tbody>
             @foreach ($liability_items as $item)
               <tr>
-                <td>{{ $item->name }}</td>
-                <td class="text-right">0</td>
+                <td>
+                  @if ($item->has_child > 0)
+                    <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
+                  @else
+                    {{ $item->name }}
+                  @endif
+                </td>
+                <td class="text-right">{{ $item->transaction_summary['closing'] }}</td>
               </tr>
             @endforeach
           </tbody>
@@ -28,8 +33,7 @@
         <table class="table table-borderless">
           <thead class="border border-dark rounded">
             <tr>
-              <th>Assets</th>
-              <th class="text-right">BAIUST <span>as at 1 July 2022</span></th>
+              <th>Asset</th>
             </tr>
           </thead>
           <tbody>

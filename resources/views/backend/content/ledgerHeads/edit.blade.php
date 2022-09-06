@@ -14,15 +14,16 @@
           @csrf
           @method('PATCH')
           <div class="form-row">
-            <div class="form-group col-md-6 col-12">
+            <div class="form-group col-sm-12 col-md-4">
               <label for="">Ledger Head Code:</label>
               <input type="text" class="form-control" data-validation="number" name="head_code" value="{{ $ledgerHead->head_code }}">
             </div>
-            <div class="form-group col-md-6 col-12">
+            <div class="form-group col-sm-12 col-md-4">
               <label for="">Ledger Head Name:</label>
               <input type="text" class="form-control" data-validation="required" name="name" value="{{ $ledgerHead->name }}">
+              <small class="text-danger"><b>Don't use special characters like (~,#,$,/,\) in your LEDGER HEAD NAME.</b></small>
             </div>
-            <div class="form-group col-md-12 col-12">
+            <div class="form-group col-sm-12 col-md-4">
               <label for="">Under:</label>
               <select name="parent_id" class="custom-select2 form-control" style="width: 100%;height:38px">
                 <option value="0" @if ($ledgerHead->parent_id == 0) selected @endif>Primary</option>
@@ -31,6 +32,22 @@
                     {{ $item->name }}</option>
                 @endforeach
               </select>
+            </div>
+            <div class="form-group col-sm-12 col-md-6">
+              <label for="">Visibility Order:</label>
+              <input type="number" class="form-control" name="visibility_order" min="1" value="{{ $ledgerHead->visibility_order }}">
+              <small class="text-danger font-weight-bold">Use this order if you are assigning this head under another head.</small>
+            </div>
+            <div class="form-group col-sm-12 col-md-6">
+              <label for="">Name of Group:</label>
+              <select name="name_of_group" class="form-control" style="width: 100%;height:40px;">
+                <option value="{{ NameOfGroup::General->value }}">{{ NameOfGroup::General->value }}</option>
+                <option value="{{ NameOfGroup::Asset->value }}">{{ NameOfGroup::Asset->value }}</option>
+                <option value="{{ NameOfGroup::Liability->value }}">{{ NameOfGroup::Liability->value }}</option>
+                <option value="{{ NameOfGroup::Income->value }}">{{ NameOfGroup::Income->value }}</option>
+                <option value="{{ NameOfGroup::Expense->value }}">{{ NameOfGroup::Expense->value }}</option>
+              </select>
+              <small class="text-danger font-weight-bold">If this head is under Primary then select the Name of Group, otherwise keep it "General".</small>
             </div>
             <div class="form-group col-md-12 col-12">
               <button type="submit" class="btn btn-success btn-md float-right">submit</button>

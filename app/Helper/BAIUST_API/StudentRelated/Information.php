@@ -9,7 +9,11 @@ class Information
     public static function get_parent_id($program, $session)
     {
         if ($program == "CSE") {
-            if ($session == config("studentSession.Fall-2022")) {
+            if ($session == config("studentSession.Fall-2023")) {
+                $parent_id = 2413;
+            } elseif ($session == config("studentSession.Spring-2023")) {
+                $parent_id = 2412;
+            } elseif ($session == config("studentSession.Fall-2022")) {
                 $parent_id = 64;
             } elseif ($session == config("studentSession.Spring-2022")) {
                 $parent_id = 63;
@@ -44,7 +48,13 @@ class Information
             }
             return $parent_id;
         } elseif ($program == "EEE") {
-            if ($session == config("studentSession.Spring-2022")) {
+            if ($session == config("studentSession.Fall-2023")) {
+                $parent_id = 2415;
+            } elseif ($session == config("studentSession.Spring-2023")) {
+                $parent_id = 2414;
+            } elseif ($session == config("studentSession.Fall-2022")) {
+                $parent_id = 2416;
+            } elseif ($session == config("studentSession.Spring-2022")) {
                 $parent_id = 922;
             } elseif ($session == config("studentSession.Fall-2021")) {
                 $parent_id = 921;
@@ -77,7 +87,13 @@ class Information
             }
             return $parent_id;
         } elseif ($program == "CE") {
-            if ($session == config("studentSession.Spring-2022")) {
+            if ($session == config("studentSession.Fall-2023")) {
+                $parent_id = 2418;
+            } elseif ($session == config("studentSession.Spring-2023")) {
+                $parent_id = 2419;
+            } elseif ($session == config("studentSession.Fall-2022")) {
+                $parent_id = 2417;
+            } elseif ($session == config("studentSession.Spring-2022")) {
                 $parent_id = 935;
             } elseif ($session == config("studentSession.Fall-2021")) {
                 $parent_id = 934;
@@ -106,7 +122,11 @@ class Information
             }
             return $parent_id;
         } elseif ($program == "BBA") {
-            if ($session == config("studentSession.Fall-2022")) {
+            if ($session == config("studentSession.Fall-2023")) {
+                $parent_id = 2421;
+            } elseif ($session == config("studentSession.Spring-2023")) {
+                $parent_id = 2420;
+            } elseif ($session == config("studentSession.Fall-2022")) {
                 $parent_id = 949;
             } elseif ($session == config("studentSession.Spring-2022")) {
                 $parent_id = 948;
@@ -139,7 +159,11 @@ class Information
             }
             return $parent_id;
         } elseif ($program == "English") {
-            if ($session == config("studentSession.Fall-2022")) {
+            if ($session == config("studentSession.Fall-2023")) {
+                $parent_id = 2423;
+            } elseif ($session == config("studentSession.Spring-2023")) {
+                $parent_id = 2422;
+            } elseif ($session == config("studentSession.Fall-2022")) {
                 $parent_id = 964;
             } elseif ($session == config("studentSession.Spring-2022")) {
                 $parent_id = 963;
@@ -170,7 +194,11 @@ class Information
             }
             return $parent_id;
         } else {
-            if ($session == config("studentSession.Fall-2022")) {
+            if ($session == config("studentSession.Fall-2023")) {
+                $parent_id = 2425;
+            } elseif ($session == config("studentSession.Spring-2023")) {
+                $parent_id = 2424;
+            } elseif ($session == config("studentSession.Fall-2022")) {
                 $parent_id = 698;
             } elseif ($session == config("studentSession.Spring-2022")) {
                 $parent_id = 697;

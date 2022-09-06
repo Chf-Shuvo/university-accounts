@@ -24,6 +24,12 @@
             </tr>
           </thead>
           <tbody>
+            @php
+              $total_opening = 0;
+              $total_debit = 0;
+              $total_credit = 0;
+              $total_closing = 0;
+            @endphp
             @foreach ($particular->particulars as $item)
               <tr>
                 <td>
@@ -45,7 +51,20 @@
                 <td>{{ $item->transaction_summary['credit'] }}</td>
                 <td>{{ $item->transaction_summary['closing'] }}</td>
               </tr>
+              @php
+                $total_opening = $total_opening + $item->transaction_summary['openning'];
+                $total_debit = $total_debit + $item->transaction_summary['debit'];
+                $total_credit = $total_credit + $item->transaction_summary['credit'];
+                $total_closing = $total_closing + $item->transaction_summary['closing'];
+              @endphp
             @endforeach
+            <tr>
+              <td colspan="2"><b>Total:</b></td>
+              <td>{{ $total_opening }}</td>
+              <td>{{ $total_debit }}</td>
+              <td>{{ $total_credit }}</td>
+              <td>{{ $total_closing }}</td>
+            </tr>
           </tbody>
         </table>
       </div>

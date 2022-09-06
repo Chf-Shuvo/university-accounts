@@ -33,36 +33,40 @@
             </thead>
             <tbody>
               @foreach ($transactions as $item)
+                @php
+                  if ($item->particular->value == 'Dr') {
+                      $look_for_particular = 'Cr';
+                  } else {
+                      $look_for_particular = 'Dr';
+                  }
+                @endphp
                 @foreach ($item->transaction->details as $detail)
-                  @if ($ledgerHead->name != $detail->head->name)
-                    @if ($detail->particular->value == 'Dr' && $item->transaction->voucher->name == 'Journal')
-                    @else
-                      <tr>
-                        <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
-                        <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
-                        <td>
-                          <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
-                        </td>
-                        <td>
-                          @if ($detail->particular->value == 'Cr')
-                            @if ($detail->amount < $item->amount)
-                              {{ $detail->amount }}
-                            @else
-                              {{ $item->amount }}
-                            @endif
+                  @if ($ledgerHead->name != $detail->head->name && $detail->particular->value == $look_for_particular)
+                    <tr>
+                      <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                      <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
+                      <td>
+                        <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
+                      </td>
+                      <td>
+                        @if ($detail->particular->value == 'Cr')
+                          @if ($detail->amount < $item->amount)
+                            {{ $detail->amount }}
+                          @else
+                            {{ $item->amount }}
                           @endif
-                        </td>
-                        <td>
-                          @if ($detail->particular->value == 'Dr')
-                            @if ($detail->amount < $item->amount)
-                              {{ $detail->amount }}
-                            @else
-                              {{ $item->amount }}
-                            @endif
+                        @endif
+                      </td>
+                      <td>
+                        @if ($detail->particular->value == 'Dr')
+                          @if ($detail->amount < $item->amount)
+                            {{ $detail->amount }}
+                          @else
+                            {{ $item->amount }}
                           @endif
-                        </td>
-                      </tr>
-                    @endif
+                        @endif
+                      </td>
+                    </tr>
                   @endif
                 @endforeach
               @endforeach
@@ -91,6 +95,7 @@
           <table class="table table-striped">
             <thead>
               <tr role="row">
+                <th>Date</th>
                 <th>Particulars</th>
                 <th>Voucher Type</th>
                 <th>Debit</th>
@@ -100,6 +105,7 @@
             <tbody>
               @foreach ($transactions as $item)
                 <tr>
+                  <td>{{ Carbon::parse($item->date)->format('d-m-Y') }}</td>
                   <td>{{ $item->head->head_code . ' (' . $item->head->name . ')' }}</td>
                   <td>
                     {{ $item->transaction->voucher->name }}
@@ -117,7 +123,7 @@
                 </tr>
               @endforeach
               <tr>
-                <td colspan="2">
+                <td colspan="3">
                   <label for="">Narration:
                     <b>{{ $transactions->first()->transaction->narration }}</b></label>
                 </td>
@@ -129,11 +135,16 @@
                 </td>
               </tr>
               <tr>
-                <td colspan="4">
-                  <a href="{{ route('voucher.accounting.destroy', $transaction_id) }}" class="btn btn-sm btn-danger float-right"><i class="icon-copy dw dw-trash1"></i> Delete Voucher</a>
-                  <a href="javascript:void(0)" class="btn btn-warning btn-sm float-right mr-2" data-toggle="modal" data-target="#journal-edit-modal" type="button"><i class="icon-copy dw dw-edit-1"></i>
-                    Edit
-                    Voucher</a>
+                <td colspan="5">
+                  @can('delete-voucher')
+                    <a href="{{ route('voucher.accounting.destroy', $transaction->id) }}" class="btn btn-sm btn-danger float-right"
+                      onclick="return confirm('Deleting this voucher will remove every transaction. Are you sure to proceed?')"><i class="icon-copy dw dw-trash1"></i> Delete Voucher</a>
+                  @endcan
+                  @can('edit-voucher')
+                    <a href="javascript:void(0)" class="btn btn-warning btn-sm float-right mr-2" data-toggle="modal" data-target="#journal-edit-modal" type="button"><i class="icon-copy dw dw-edit-1"></i>
+                      Edit
+                      Voucher</a>
+                  @endcan
                 </td>
               </tr>
             </tbody>
@@ -147,17 +158,21 @@
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title">
-              Edit Voucher - Database ID #{{ $transaction_id }}
+              Edit Voucher - Database ID #{{ $transaction->id }}
             </h4>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
               ×
             </button>
           </div>
           <div class="modal-body">
-            <form action="{{ route('voucher.accounting.update', $transaction_id) }}" method="post" id="voucherForm">
+            <form action="{{ route('voucher.accounting.update', $transaction->id) }}" method="post" id="voucherForm">
               @csrf
               @method('PATCH')
               <div class="form-row">
+                <div class="form-group col-md-12 col-12">
+                  <label for="">Change Period:</label>
+                  <input type="text" name="date" class="form-control date-picker" autocomplete="off" value="{{ $transaction->date }}">
+                </div>
                 <div class="col-sm-12 col-md-12">
                   <table class="table table-striped">
                     <thead>

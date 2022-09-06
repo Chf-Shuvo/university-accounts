@@ -35,10 +35,17 @@ class LedgerHeadController extends Controller
     public function store(Request $request)
     {
         try {
-            $input_parent = explode("-", $request->parent_ledger);
-            $parent_id = LedgerHead::where("name", $input_parent[0])->first()
-                ->id;
-            LedgerHead::firstOrCreate(
+            // return $request;
+            $input_parent = explode("~", $request->parent_ledger);
+            if ($input_parent[0] == "Primary") {
+                $parent_id = 0;
+            } else {
+                $parent_id = LedgerHead::where(
+                    "name",
+                    $input_parent[0]
+                )->first()->id;
+            }
+            LedgerHead::updateOrCreate(
                 ["name" => $request->name],
                 [
                     "head_code" => $request->head_code,

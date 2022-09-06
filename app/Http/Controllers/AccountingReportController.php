@@ -6,6 +6,7 @@ use App\Enums\NameOfGroup;
 use App\Enums\ParticularType;
 use App\Helper\TransactionReports\Calculation;
 use App\Models\LedgerHead;
+use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
 
@@ -33,9 +34,15 @@ class AccountingReportController extends Controller
                 "company_id",
                 auth()->user()->company
             )
-                ->where("name_of_group", NameOfGroup::Liabilities)
+                ->where("name_of_group", NameOfGroup::Liability)
                 ->orderBy("visibility_order", "asc")
                 ->get();
+            foreach ($liability_items as $item) {
+                $transaction_summary = Calculation::calculate_summary(
+                    $item->id
+                );
+                $item->transaction_summary = $transaction_summary;
+            }
             return view(
                 "backend.content.report.balanceSheet.index",
                 compact("asset_items", "liability_items")
@@ -48,6 +55,7 @@ class AccountingReportController extends Controller
     public function get_particulars($ledgerHead)
     {
         try {
+            // return $ledgerHead;
             $particular = LedgerHead::with(
                 "particulars:parent_id,id,name,alias_of",
                 "particulars.alias"
@@ -77,7 +85,8 @@ class AccountingReportController extends Controller
     public function get_transactions($ledgerHead)
     {
         try {
-            $ledgerHead = explode("-", $ledgerHead);
+            // return $ledgerHead;
+            $ledgerHead = explode("~", $ledgerHead);
             $ledgerHead = LedgerHead::where("name", $ledgerHead[0])->first()
                 ->id;
             $transactions = Calculation::calculate($ledgerHead);
@@ -88,11 +97,11 @@ class AccountingReportController extends Controller
                 ->values();
             $closing_balance =
                 $transactions
-                    ->where("particular", ParticularType::Debit)
-                    ->sum("amount") -
+                ->where("particular", ParticularType::Debit)
+                ->sum("amount") -
                 $transactions
-                    ->where("particular", ParticularType::Credit)
-                    ->sum("amount");
+                ->where("particular", ParticularType::Credit)
+                ->sum("amount");
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
             return view(
@@ -107,6 +116,7 @@ class AccountingReportController extends Controller
     public function particular_transaction_details($transaction_id)
     {
         try {
+            $transaction = Transaction::find($transaction_id);
             $transactions = TransactionDetail::with(
                 "head",
                 "transaction.voucher"
@@ -116,7 +126,7 @@ class AccountingReportController extends Controller
             // return $transactions;
             return view(
                 "backend.content.report.balanceSheet.transactions",
-                compact("transactions", "transaction_id")
+                compact("transaction", "transactions")
             );
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -147,7 +157,7 @@ class AccountingReportController extends Controller
             foreach ($ledgerHeads as $ledgerHead) {
                 array_push(
                     $data_array,
-                    $ledgerHead->name . "-" . $ledgerHead->head_code
+                    $ledgerHead->name . "~" . $ledgerHead->head_code
                 );
             }
             return $data_array;
@@ -159,7 +169,7 @@ class AccountingReportController extends Controller
     public function display_ledger_transactions($ledgerHead)
     {
         try {
-            $ledgerHead = explode("-", $ledgerHead);
+            $ledgerHead = explode("~", $ledgerHead);
             $ledgerHead = LedgerHead::where("name", $ledgerHead[0])->first()
                 ->id;
             $transactions = Calculation::calculate($ledgerHead);
@@ -170,11 +180,11 @@ class AccountingReportController extends Controller
                 ->values();
             $closing_balance =
                 $transactions
-                    ->where("particular", ParticularType::Debit)
-                    ->sum("amount") -
+                ->where("particular", ParticularType::Debit)
+                ->sum("amount") -
                 $transactions
-                    ->where("particular", ParticularType::Credit)
-                    ->sum("amount");
+                ->where("particular", ParticularType::Credit)
+                ->sum("amount");
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
             return view(

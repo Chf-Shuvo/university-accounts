@@ -9,6 +9,7 @@ return [
     "Spring-2020" => "Spring-2020",
     "Spring-2021" => "Spring-2021",
     "Spring-2022" => "Spring-2022",
+    "Spring-2023" => "Spring-2023",
     "Fall-2015" => "Fall-2015",
     "Fall-2016" => "Fall-2016",
     "Fall-2017" => "Fall-2017",
@@ -17,4 +18,5 @@ return [
     "Fall-2020" => "Fall-2020",
     "Fall-2021" => "Fall-2021",
     "Fall-2022" => "Fall-2022",
+    "Fall-2023" => "Fall-2023",
 ];

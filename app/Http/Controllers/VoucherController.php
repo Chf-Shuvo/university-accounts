@@ -131,7 +131,7 @@ class VoucherController extends Controller
                 "date" => Carbon::parse($request->date)->format("Y-m-d"),
             ]);
             foreach ($request->account_type as $index => $account_type) {
-                $ledger_head_name = explode("-", $request->particular[$index]);
+                $ledger_head_name = explode("~", $request->particular[$index]);
                 $parents = Calculation::parents($ledger_head_name[0]);
                 $parents = json_encode($parents);
                 $ledger_head_id = LedgerHead::where(
@@ -157,16 +157,19 @@ class VoucherController extends Controller
     {
         try {
             // return $request;
+            $entry_date = Carbon::parse($request->date)->format("Y-m-d");
             $total_amount = array_sum($request->credit_amount);
             $all_amounts = array_merge(
                 $request->debit_amount,
                 $request->credit_amount
             );
-            Transaction::where("id", $transaction_id)->update([
+            Transaction::find($transaction_id)->update([
+                "date" => $entry_date,
                 "total_amount" => $total_amount,
             ]);
             foreach ($request->particular as $index => $particular) {
-                TransactionDetail::where("id", $particular)->update([
+                TransactionDetail::find($particular)->update([
+                    "date" => $entry_date,
                     "amount" => $all_amounts[$index],
                 ]);
             }
@@ -181,7 +184,7 @@ class VoucherController extends Controller
     {
         try {
             Transaction::destroy($transaction_id);
-            toast("Voucher deleted successfully", "Deleted");
+            toast("Voucher deleted successfully!", "Deleted");
             return redirect()->route("report.balance-sheet.index");
         } catch (\Throwable $th) {
             return $th->getMessage();

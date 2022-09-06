@@ -17,46 +17,51 @@
         <a href="{{ route('ledger-head.type', 'group') }}" class="btn btn-primary btn-md">Group Ledgers</a>
       </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 mb-20">
-      <div class="pd-20 card-box height-100-p">
-        <h4 class="text-center p-3">Create New Ledger</h4>
-        <form action="{{ route('ledger-head.store') }}" method="post" enctype="multipart/form-data">
-          @csrf
-          <div class="form-row">
-            <div class="form-group col-md-6 col-12">
-              <label for="">Ledger Head Code:</label>
-              <input type="text" class="form-control" name="head_code">
+    @can('add-ledger')
+      <div class="col-lg-12 col-md-12 col-sm-12 mb-20">
+        <div class="pd-20 card-box height-100-p">
+          <h4 class="text-center p-3">Create New Ledger</h4>
+          <form action="{{ route('ledger-head.store') }}" method="post" enctype="multipart/form-data">
+            @csrf
+            <div class="form-row">
+              <div class="form-group col-md-4 col-12">
+                <label for="">Ledger Head Code:</label>
+                <input type="text" class="form-control" name="head_code">
+              </div>
+              <div class="form-group col-md-4 col-12">
+                <label for="">Ledger Head Name:</label>
+                <input type="text" class="form-control" data-validation="required" name="name">
+                <small class="text-danger"><b>Don't use special characters like (~,#,$,/,\) in your LEDGER HEAD NAME.</b></small>
+              </div>
+              <div class="form-group col-md-4 col-12">
+                <label for="">Visibility Order:</label>
+                <input type="number" class="form-control" name="visibility_order" min="1" value="1">
+                <small class="text-danger font-weight-bold">Use this order if you are assigning this head under another head.</small>
+              </div>
+              <div class="form-group col-md-6 col-12">
+                <label for="">Under:</label>
+                <input name="parent_ledger" class="form-control" onkeyup="load_ledger_heads(event)" value="Primary~">
+                <small class="text-danger font-weight-bold">After selecting the ledger from the dropdown menu, pleaes don't remove any character from the text-field.</small>
+              </div>
+              <div class="form-group col-md-6 col-12">
+                <label for="">Name of Group:</label>
+                <select name="name_of_group" class="form-control" style="width: 100%;height:40px;">
+                  <option value="{{ NameOfGroup::General->value }}">{{ NameOfGroup::General->value }}</option>
+                  <option value="{{ NameOfGroup::Asset->value }}">{{ NameOfGroup::Asset->value }}</option>
+                  <option value="{{ NameOfGroup::Liability->value }}">{{ NameOfGroup::Liability->value }}</option>
+                  <option value="{{ NameOfGroup::Income->value }}">{{ NameOfGroup::Income->value }}</option>
+                  <option value="{{ NameOfGroup::Expense->value }}">{{ NameOfGroup::Expense->value }}</option>
+                </select>
+                <small class="text-danger font-weight-bold">If this head is under Primary then select the Name of Group.</small>
+              </div>
+              <div class="form-group col-md-12 col-12">
+                <button type="submit" class="btn btn-success btn-md float-right">submit</button>
+              </div>
             </div>
-            <div class="form-group col-md-6 col-12">
-              <label for="">Ledger Head Name:</label>
-              <input type="text" class="form-control" data-validation="required" name="name">
-            </div>
-            <div class="form-group col-md-12 col-12">
-              <label for="">Under:</label>
-              <input name="parent_ledger" class="form-control" onkeyup="load_ledger_heads(event)" value="Primary-">
-              <small class="text-danger font-weight-bold">After selecting the ledger from the dropdown menu, pleaes don't remove any character from the text-field.</small>
-            </div>
-            <div class="form-group col-md-12 col-12 d-none" id="name_of_group">
-              <label for="">Name of Group:</label>
-              <select name="name_of_group" class="form-control" style="width: 100%;height:38px;">
-                <option value="General">General</option>
-                <option value="Asset">Asset</option>
-                <option value="Liabilities">Liabilities</option>
-                <option value="Income">Income</option>
-                <option value="Expense">Expense</option>
-              </select>
-            </div>
-            <div class="form-group col-md-12 col-12 d-none" id="visibility_order">
-              <label for="">Visibility Order:</label>
-              <input type="number" min="1" name="visibility_order" class="form-control">
-            </div>
-            <div class="form-group col-md-12 col-12">
-              <button type="submit" class="btn btn-success btn-md float-right">submit</button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    @endcan
     <div class="col-lg-12 col-md-12 col-sm-12 my-3 d-flex justify-content-end">
       <div class="pd-20 card-box height-100-p">
         {{ $items->links() }}
@@ -84,11 +89,15 @@
                 <td>{{ $item->parent }}</td>
                 <td>{{ $item->name_of_group->value }}</td>
                 <td>
-                  <a href="{{ route('ledger-head.edit', $item->id) }}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="view or edit"><i
-                      class="icon-copy dw dw-edit-1"></i></a>
-                  <a href="{{ route('ledger-head.destroy', $item->id) }}" class="btn btn-danger btn-sm"
-                    onclick="return confirm('Deleting this head may affect your account information. Please verify your action before deleting this head.')" data-toggle="tooltip" data-placement="top"
-                    title="delete-head"><i class="icon-copy dw dw-delete-3"></i></a>
+                  @can('edit-ledger')
+                    <a href="{{ route('ledger-head.edit', $item->id) }}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="view or edit"><i
+                        class="icon-copy dw dw-edit-1"></i></a>
+                  @endcan
+                  @can('delete-ledger')
+                    <a href="{{ route('ledger-head.destroy', $item->id) }}" class="btn btn-danger btn-sm"
+                      onclick="return confirm('Deleting this head may affect your account information. Please verify your action before deleting this head.')" data-toggle="tooltip" data-placement="top"
+                      title="delete-head"><i class="icon-copy dw dw-delete-3"></i></a>
+                  @endcan
                 </td>
               </tr>
             @endforeach
@@ -121,17 +130,6 @@
   <script>
     $(document).ready(function() {
       $.validate();
-      // Name of Group Selection for Primary Ledgers
-      $("#ledger_parent").on("change", function() {
-        let selectedLedger = $(this).find(":selected").val();
-        if (selectedLedger == 0) {
-          $("#name_of_group").removeClass('d-none');
-          $("#visibility_order").removeClass('d-none');
-        } else {
-          $("#name_of_group").addClass('d-none');
-          $("#visibility_order").addClass('d-none');
-        }
-      });
     });
     // load the ledgers
     function load_ledger_heads(event) {

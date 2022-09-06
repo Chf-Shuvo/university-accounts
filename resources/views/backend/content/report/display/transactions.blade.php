@@ -21,39 +21,40 @@
        </thead>
        <tbody>
          @foreach ($transactions as $item)
+           @php
+             if ($item->particular->value == 'Dr') {
+                 $look_for_particular = 'Cr';
+             } else {
+                 $look_for_particular = 'Dr';
+             }
+           @endphp
            @foreach ($item->transaction->details as $detail)
-             @if ($ledgerHead->name != $detail->head->name)
-               @if ($detail->particular->value == 'Dr' && $item->transaction->voucher->name == 'Journal')
-               @else
-                 @if ($detail->particular->value == 'Cr' && $item->transaction->voucher->name == 'Bank Receipt')
-                 @else
-                   <tr>
-                     <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
-                     <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
-                     <td>
-                       <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
-                     </td>
-                     <td>
-                       @if ($detail->particular->value == 'Cr')
-                         @if ($detail->amount < $item->amount)
-                           {{ $detail->amount }}
-                         @else
-                           {{ $item->amount }}
-                         @endif
-                       @endif
-                     </td>
-                     <td>
-                       @if ($detail->particular->value == 'Dr')
-                         @if ($detail->amount < $item->amount)
-                           {{ $detail->amount }}
-                         @else
-                           {{ $item->amount }}
-                         @endif
-                       @endif
-                     </td>
-                   </tr>
-                 @endif
-               @endif
+             @if ($ledgerHead->name != $detail->head->name && $detail->particular->value == $look_for_particular)
+               <tr>
+                 <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                 <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
+                 <td>
+                   <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
+                 </td>
+                 <td>
+                   @if ($detail->particular->value == 'Cr')
+                     @if ($detail->amount < $item->amount)
+                       {{ $detail->amount }}
+                     @else
+                       {{ $item->amount }}
+                     @endif
+                   @endif
+                 </td>
+                 <td>
+                   @if ($detail->particular->value == 'Dr')
+                     @if ($detail->amount < $item->amount)
+                       {{ $detail->amount }}
+                     @else
+                       {{ $item->amount }}
+                     @endif
+                   @endif
+                 </td>
+               </tr>
              @endif
            @endforeach
          @endforeach

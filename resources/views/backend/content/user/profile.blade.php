@@ -30,7 +30,7 @@
           </div>
           <div class="form-group col-md-4">
             <label for="">User Contact:</label>
-            <input type="text" name="phone" class="form-control" value="{{ $user->phone }}" data-validation="number">
+            <input type="text" name="contact" class="form-control" value="{{ $user->contact }}" data-validation="number">
           </div>
           <div class="form-group col-md-6">
             <label for="">Password:</label>

@@ -9,11 +9,13 @@
 
 @section('content')
   <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12 text-right mb-3">
-      <div class="pd-20 card-box height-100-p">
-        <a href="javascript:void(0)" class="btn btn-info btn-md" data-toggle="modal" data-target="#dataModal"><i class="icon-copy dw dw-add"></i> add new voucher type</a>
+    @can('add-voucherType')
+      <div class="col-lg-12 col-md-12 col-sm-12 text-right mb-3">
+        <div class="pd-20 card-box height-100-p">
+          <a href="javascript:void(0)" class="btn btn-info btn-md" data-toggle="modal" data-target="#dataModal"><i class="icon-copy dw dw-add"></i> add new voucher type</a>
+        </div>
       </div>
-    </div>
+    @endcan
     <div class="col-lg-12 col-md-12 col-sm-12">
       <div class="pd-20 card-box height-100-p">
         <table class="data-table table stripe hover nowrap">
@@ -30,9 +32,13 @@
                 <td>{{ $item->id }}</td>
                 <td>{{ $item->name }}</td>
                 <td>
-                  <a href="{{ route('voucher.manage.edit', $item->id) }}" class="btn btn-warning btn-sm"><i class="icon-copy dw dw-edit-1"></i></a>
-                  <a href="{{ route('voucher.manage.destroy', $item->id) }}" class="btn btn-danger btn-sm"
-                    onclick="return confirm('Deleting this head may affect your account information. Please verify your action before deleting this head.')"><i class="icon-copy dw dw-delete-3"></i></a>
+                  @can('edit-voucherType')
+                    <a href="{{ route('voucher.manage.edit', $item->id) }}" class="btn btn-warning btn-sm"><i class="icon-copy dw dw-edit-1"></i></a>
+                  @endcan
+                  @can('delete-voucherType')
+                    <a href="{{ route('voucher.manage.destroy', $item->id) }}" class="btn btn-danger btn-sm"
+                      onclick="return confirm('Deleting this head may affect your account information. Please verify your action before deleting this head.')"><i class="icon-copy dw dw-delete-3"></i></a>
+                  @endcan
                 </td>
               </tr>
             @endforeach

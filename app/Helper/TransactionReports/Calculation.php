@@ -51,10 +51,9 @@ class Calculation
             $transactionIDs = $company_transactions
                 ->where("company_transactions", "!=", null)
                 ->pluck("transaction_id");
-            // return $transactionIDs;
+
             $transactions = TransactionDetail::with(
                 "transaction",
-                "transaction.details.head"
             )
                 ->whereIn("transaction_id", $transactionIDs)
                 ->get();
@@ -71,20 +70,20 @@ class Calculation
             $start_date = Carbon::createFromFormat(
                 "Y-m-d",
                 self::start_date()
-            )->subDay();
+            );
             $end_date = Carbon::createFromFormat("Y-m-d", self::end_date());
 
             // dd($start_date);
             $ledgerHead = LedgerHead::find($head);
             if ($ledgerHead->has_child > 0) {
-                $transactions = TransactionDetail::with("transaction")
-                    ->where("parents", "like", "%" . "," . $head . "," . "%")
+                $transactions = TransactionDetail::where("parents", "like", "%" . "," . $head . "," . "%")
                     ->get();
             } else {
                 $transactions = TransactionDetail::with("transaction")
                     ->where("ledger_head", $head)
                     ->get();
             }
+            // return $transactions;
             if ($transactions->isEmpty()) {
                 $transaction_summary = [
                     "openning" => 0,
@@ -108,12 +107,8 @@ class Calculation
                         "Y-m-d",
                         $transaction->date
                     );
-
-                    if (
-                        $transaction_date->between($start_date, $end_date) &&
-                        $transaction->transaction->company_id ==
-                            auth()->user()->company
-                    ) {
+                    // return $start_date . '+' . $end_date;
+                    if ($transaction_date->between($start_date, $end_date)) {
                         if ($transaction->particular == ParticularType::Debit) {
                             $debit = $debit + $transaction->amount;
                         } else {
@@ -121,38 +116,36 @@ class Calculation
                         }
                     }
                 }
-                // opening balance calculation
-                if ($start_date->gt($root_date)) {
-                    $root_end_date = $start_date->subDay();
-                    foreach ($transactions as $transaction) {
-                        $transaction_date = Carbon::createFromFormat(
-                            "Y-m-d",
-                            $transaction->date
-                        );
+                // return $debit . '+' . $credit;
+                /**
+                 * ***********************************
+                 * opening balance calculation
+                 * ***********************************
+                 */
+                // return $root_date;
+                // return $root_end_date = $start_date->subDay();
+                $root_end_date = $start_date->subDay();
+                foreach ($transactions as $transaction) {
+                    $transaction_date = Carbon::createFromFormat(
+                        "Y-m-d",
+                        $transaction->date
+                    );
+                    if ($transaction_date->between($root_date, $root_end_date)) {
                         if (
-                            $transaction_date->between(
-                                $root_date,
-                                $root_end_date
-                            ) &&
-                            $transaction->transaction->company_id ==
-                                auth()->user()->company
+                            $transaction->particular ==
+                            ParticularType::Debit
                         ) {
-                            if (
-                                $transaction->particular ==
-                                ParticularType::Debit
-                            ) {
-                                $root_debit =
-                                    $root_debit + $transaction->amount;
-                            } else {
-                                $root_credit =
-                                    $root_credit + $transaction->amount;
-                            }
-                            $balance = $root_debit - $root_credit;
-                            $openning = $openning + $balance;
+                            $root_debit =
+                                $root_debit + $transaction->amount;
+                        } else {
+                            $root_credit =
+                                $root_credit + $transaction->amount;
                         }
                     }
                 }
-                $closing = $debit - $credit;
+                $openning = $root_debit - $root_credit;
+                // return $root_debit . '+' . $root_credit . '+' . $openning;
+                $closing = $openning + $debit - $credit;
                 $transaction_summary = [
                     "openning" => $openning,
                     "debit" => $debit,

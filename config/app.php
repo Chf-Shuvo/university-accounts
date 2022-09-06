@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\NameOfGroup;
 use App\Helper\TransactionReports\Calculation;
 use Carbon\Carbon;
 
@@ -232,5 +233,6 @@ return [
         "Validator" => Illuminate\Support\Facades\Validator::class,
         "View" => Illuminate\Support\Facades\View::class,
         "Helper" => App\Helper\Helper::class,
+        "NameOfGroup" => NameOfGroup::class,
     ],
 ];
