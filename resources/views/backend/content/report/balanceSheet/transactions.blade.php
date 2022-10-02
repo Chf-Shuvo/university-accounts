@@ -26,6 +26,7 @@
               <tr role="row">
                 <th>Date</th>
                 <th>Particulars</th>
+                <th>Narration</th>
                 <th>Voucher Type</th>
                 <th>Debit</th>
                 <th>Credit</th>
@@ -45,6 +46,7 @@
                     <tr>
                       <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
                       <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
+                      <td>{{ $item->transaction->narration }}</td>
                       <td>
                         <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
                       </td>
@@ -82,6 +84,7 @@
                     {{ $closing_balance }}
                   @endif
                 </td>
+                <td></td>
               </tr>
             </tbody>
           </table>

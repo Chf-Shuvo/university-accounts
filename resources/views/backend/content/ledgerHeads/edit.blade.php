@@ -16,7 +16,7 @@
           <div class="form-row">
             <div class="form-group col-sm-12 col-md-4">
               <label for="">Ledger Head Code:</label>
-              <input type="text" class="form-control" data-validation="number" name="head_code" value="{{ $ledgerHead->head_code }}">
+              <input type="text" class="form-control" data-validation="required" name="head_code" value="{{ $ledgerHead->head_code }}">
             </div>
             <div class="form-group col-sm-12 col-md-4">
               <label for="">Ledger Head Name:</label>
@@ -41,11 +41,11 @@
             <div class="form-group col-sm-12 col-md-6">
               <label for="">Name of Group:</label>
               <select name="name_of_group" class="form-control" style="width: 100%;height:40px;">
-                <option value="{{ NameOfGroup::General->value }}">{{ NameOfGroup::General->value }}</option>
-                <option value="{{ NameOfGroup::Asset->value }}">{{ NameOfGroup::Asset->value }}</option>
-                <option value="{{ NameOfGroup::Liability->value }}">{{ NameOfGroup::Liability->value }}</option>
-                <option value="{{ NameOfGroup::Income->value }}">{{ NameOfGroup::Income->value }}</option>
-                <option value="{{ NameOfGroup::Expense->value }}">{{ NameOfGroup::Expense->value }}</option>
+                <option value="{{ NameOfGroup::General->value }}" @if (NameOfGroup::General->value == $ledgerHead->name_of_group->value) selected @endif>{{ NameOfGroup::General->value }}</option>
+                <option value="{{ NameOfGroup::Asset->value }}" @if (NameOfGroup::Asset->value == $ledgerHead->name_of_group->value) selected @endif>{{ NameOfGroup::Asset->value }}</option>
+                <option value="{{ NameOfGroup::Liability->value }}" @if (NameOfGroup::Liability->value == $ledgerHead->name_of_group->value) selected @endif>{{ NameOfGroup::Liability->value }}</option>
+                <option value="{{ NameOfGroup::Income->value }}" @if (NameOfGroup::Income->value == $ledgerHead->name_of_group->value) selected @endif>{{ NameOfGroup::Income->value }}</option>
+                <option value="{{ NameOfGroup::Expense->value }}" @if (NameOfGroup::Expense->value == $ledgerHead->name_of_group->value) selected @endif>{{ NameOfGroup::Expense->value }}</option>
               </select>
               <small class="text-danger font-weight-bold">If this head is under Primary then select the Name of Group, otherwise keep it "General".</small>
             </div>

@@ -47,7 +47,7 @@ Route::get("test", function () {
         // return $student;
         $student_for_receivable = [
             "student_id" => $student->Registration_Number,
-            "session" => $current_semester,
+            "session" => "Spring-2022",
         ];
         return $receivables = Http::withToken(
             "2867|5M2Sjrdkf58fxiGEwDFsgbq2QA2KmUULtnwhtWND",
@@ -57,7 +57,7 @@ Route::get("test", function () {
             $student_for_receivable
         );
         $receivables = json_decode($receivables);
-        $receivables;
+        // return $receivables;
         if ($receivables) {
             $total = array_sum(array_column($receivables, "amount"));
             $ledger_head_student = LedgerHead::where(

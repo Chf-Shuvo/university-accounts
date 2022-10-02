@@ -43,9 +43,57 @@ class AccountingReportController extends Controller
                 );
                 $item->transaction_summary = $transaction_summary;
             }
+            // return $liability_items;
+            /**
+             * income and expense for balance sheet view
+             */
+
+            $income_items = LedgerHead::where(
+                "company_id",
+                auth()->user()->company
+            )
+                ->where("name_of_group", NameOfGroup::Income)
+                ->orderBy("visibility_order", "asc")
+                ->get();
+            foreach ($income_items as $item) {
+                $transaction_summary = Calculation::calculate_summary(
+                    $item->id
+                );
+                $item->transaction_summary = $transaction_summary;
+            }
+
+            $expense_items = LedgerHead::where(
+                "company_id",
+                auth()->user()->company
+            )
+                ->where("name_of_group", NameOfGroup::Expense)
+                ->orderBy("visibility_order", "asc")
+                ->get();
+            foreach ($expense_items as $item) {
+                $transaction_summary = Calculation::calculate_summary(
+                    $item->id
+                );
+                $item->transaction_summary = $transaction_summary;
+            }
+            // calculating income & expense total
+            $income_total = 0;
+            $expense_total = 0;
+            $difference = 0;
+            foreach ($income_items as $item) {
+                $income_total =
+                    $income_total + -1 * $item->transaction_summary["closing"];
+            }
+            foreach ($expense_items as $item) {
+                $expense_total =
+                    $expense_total + $item->transaction_summary["closing"];
+            }
+            $difference = $income_total - $expense_total;
+            /**
+             * Ends
+             */
             return view(
                 "backend.content.report.balanceSheet.index",
-                compact("asset_items", "liability_items")
+                compact("asset_items", "liability_items", "difference")
             );
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -97,11 +145,11 @@ class AccountingReportController extends Controller
                 ->values();
             $closing_balance =
                 $transactions
-                ->where("particular", ParticularType::Debit)
-                ->sum("amount") -
+                    ->where("particular", ParticularType::Debit)
+                    ->sum("amount") -
                 $transactions
-                ->where("particular", ParticularType::Credit)
-                ->sum("amount");
+                    ->where("particular", ParticularType::Credit)
+                    ->sum("amount");
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
             return view(
@@ -180,11 +228,11 @@ class AccountingReportController extends Controller
                 ->values();
             $closing_balance =
                 $transactions
-                ->where("particular", ParticularType::Debit)
-                ->sum("amount") -
+                    ->where("particular", ParticularType::Debit)
+                    ->sum("amount") -
                 $transactions
-                ->where("particular", ParticularType::Credit)
-                ->sum("amount");
+                    ->where("particular", ParticularType::Credit)
+                    ->sum("amount");
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
             return view(

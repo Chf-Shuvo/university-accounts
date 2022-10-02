@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ReportController;
+use App\Http\Controllers\API\StudentReceivableController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,15 @@ use Illuminate\Support\Facades\Route;
 */
 Route::controller(AuthController::class)->group(function () {
     Route::post("login", "login");
+});
+
+Route::controller(StudentReceivableController::class)->group(function () {
+    Route::group(
+        ["middleware" => "auth:sanctum", "prefix" => "student"],
+        function () {
+            Route::post("receivable", "store");
+        }
+    );
 });
 
 Route::controller(ReportController::class)->group(function () {
