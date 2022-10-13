@@ -62,12 +62,12 @@
               </div>
               <div class="form-group col-md-4">
                 <label for="">From:</label>
-                <input name="from" class="form-control date-picker" placeholder="Select From Date" type="text" data-validation="required">
+                <input name="from" class="form-control date-picker" placeholder="Select From Date" type="text" data-validation="required" autocomplete="off">
                 <small class="text-info">Select the start date of the range.</small>
               </div>
               <div class="form-group col-md-4">
                 <label for="">To:</label>
-                <input name="to" class="form-control date-picker" placeholder="Select To Date" type="text" data-validation="required">
+                <input name="to" class="form-control date-picker" placeholder="Select To Date" type="text" data-validation="required" autocomplete="off">
                 <small class="text-info">Select the ends date of the range.</small>
               </div>
               <div class="form-group col-md-12">
@@ -82,6 +82,7 @@
           <table class="data-table-export table stripe hover nowrap">
             <thead>
               <tr>
+                <th>Date(Action Performed)</th>
                 <th>Action Taken In</th>
                 <th>Action Taken By</th>
                 <th>Action</th>
@@ -96,8 +97,15 @@
                   $newValue = json_decode($item->new_values);
                 @endphp
                 <tr>
+                  <td>{{ Carbon::parse($item->created_at)->format('d M Y h:m:a') }}</td>
                   <td class="table-plus">{{ $model }}</td>
-                  <td>{{ $item->user->name }}</td>
+                  <td>
+                    @if ($item->user)
+                      {{ $item->user->name }}
+                    @else
+                      Action From IUMSS
+                    @endif
+                  </td>
                   <td>{{ $item->event }}</td>
                   <td>
                     @foreach ($oldValue as $old)

@@ -227,10 +227,14 @@ class Information
             return 147;
         } elseif ($fee_id_from_iumss == "3") {
             return 8;
+        } elseif ($fee_id_from_iumss == "4") {
+            return 9;
         } elseif ($fee_id_from_iumss == "5") {
             return 2386;
         } elseif ($fee_id_from_iumss == "6") {
             return 898;
+        } elseif ($fee_id_from_iumss == "7") {
+            return 2712;
         } elseif ($fee_id_from_iumss == "8") {
             return 900;
         } elseif ($fee_id_from_iumss == "9") {
@@ -249,6 +253,8 @@ class Information
             return 906;
         } elseif ($fee_id_from_iumss == "16") {
             return 907;
+        } elseif ($fee_id_from_iumss == "17") {
+            return 2436;
         } else {
             return 0;
         }
