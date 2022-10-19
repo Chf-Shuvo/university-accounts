@@ -54,6 +54,8 @@ class Calculation
 
             $transactions = TransactionDetail::with(
                 "transaction",
+                "transaction.details",
+                "head"
             )
                 ->whereIn("transaction_id", $transactionIDs)
                 ->get();
@@ -67,17 +69,17 @@ class Calculation
     {
         try {
             $root_date = Carbon::createFromFormat("Y-m-d", self::root_date());
-            $start_date = Carbon::createFromFormat(
-                "Y-m-d",
-                self::start_date()
-            );
+            $start_date = Carbon::createFromFormat("Y-m-d", self::start_date());
             $end_date = Carbon::createFromFormat("Y-m-d", self::end_date());
 
             // dd($start_date);
             $ledgerHead = LedgerHead::find($head);
             if ($ledgerHead->has_child > 0) {
-                $transactions = TransactionDetail::where("parents", "like", "%" . "," . $head . "," . "%")
-                    ->get();
+                $transactions = TransactionDetail::where(
+                    "parents",
+                    "like",
+                    "%" . "," . $head . "," . "%"
+                )->get();
             } else {
                 $transactions = TransactionDetail::with("transaction")
                     ->where("ledger_head", $head)
@@ -130,16 +132,13 @@ class Calculation
                         "Y-m-d",
                         $transaction->date
                     );
-                    if ($transaction_date->between($root_date, $root_end_date)) {
-                        if (
-                            $transaction->particular ==
-                            ParticularType::Debit
-                        ) {
-                            $root_debit =
-                                $root_debit + $transaction->amount;
+                    if (
+                        $transaction_date->between($root_date, $root_end_date)
+                    ) {
+                        if ($transaction->particular == ParticularType::Debit) {
+                            $root_debit = $root_debit + $transaction->amount;
                         } else {
-                            $root_credit =
-                                $root_credit + $transaction->amount;
+                            $root_credit = $root_credit + $transaction->amount;
                         }
                     }
                 }

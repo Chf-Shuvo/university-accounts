@@ -65,10 +65,9 @@
                   </td>
                 </tr>
               </table>
-              <button type="button" id="remove" class="btn btn-danger float-right ml-2" data-toggle="tooltip" data-placement="top" title="remove last Dr/Cr entry field"><i
-                  class="icon-copy dw dw-cancel"></i>
+              <button type="button" id="remove" class="btn btn-danger float-right ml-2" title="remove last Dr/Cr entry field"><i class="icon-copy dw dw-cancel"></i>
                 Particular</button>
-              <button type="button" id="add" class="btn btn-success float-right" data-toggle="tooltip" data-placement="top" title="add new Dr/Cr entry field"><i class="icon-copy dw dw-add"></i>
+              <button type="button" id="add" class="btn btn-success float-right" title="add new Dr/Cr entry field"><i class="icon-copy dw dw-add"></i>
                 Particular</button>
             </div>
 

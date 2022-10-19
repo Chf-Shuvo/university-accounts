@@ -59,7 +59,8 @@
               @endphp
             @endforeach
             <tr>
-              <td colspan="2"><b>Total:</b></td>
+              <td><b>Total:</b></td>
+              <td></td>
               <td>{{ $total_opening }}</td>
               <td>{{ $total_debit }}</td>
               <td>{{ $total_credit }}</td>

@@ -14,12 +14,22 @@
          <tr role="row">
            <th>Date</th>
            <th>Particulars</th>
+           <th>Narration</th>
            <th>Voucher Type</th>
            <th>Debit</th>
            <th>Credit</th>
+           <th>Balance</th>
          </tr>
        </thead>
        <tbody>
+         <tr>
+           <td colspan="6">Balance:</td>
+           <td>{{ $balance }}</td>
+         </tr>
+         @php
+           $total_debit = 0;
+           $total_credit = 0;
+         @endphp
          @foreach ($transactions as $item)
            @php
              if ($item->particular->value == 'Dr') {
@@ -33,6 +43,7 @@
                <tr>
                  <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
                  <td>{{ $detail->particular->value . ' ' . $detail->head->name }}</td>
+                 <td>{{ $item->transaction->narration }}</td>
                  <td>
                    <a href="{{ route('report.balance-sheet.particular.transacation', $detail->transaction_id) }}" class="font-weight-bold">{{ $item->transaction->voucher->name }}</a>
                  </td>
@@ -40,8 +51,16 @@
                    @if ($detail->particular->value == 'Cr')
                      @if ($detail->amount < $item->amount)
                        {{ $detail->amount }}
+                       @php
+                         $balance = $balance + $detail->amount;
+                         $total_credit = $total_credit + $detail->amount;
+                       @endphp
                      @else
                        {{ $item->amount }}
+                       @php
+                         $balance = $balance + $item->amount;
+                         $total_credit = $total_credit + $item->amount;
+                       @endphp
                      @endif
                    @endif
                  </td>
@@ -49,27 +68,29 @@
                    @if ($detail->particular->value == 'Dr')
                      @if ($detail->amount < $item->amount)
                        {{ $detail->amount }}
+                       @php
+                         $balance = $balance - $detail->amount;
+                         $total_debit = $total_debit + $detail->amount;
+                       @endphp
                      @else
                        {{ $item->amount }}
+                       @php
+                         $balance = $balance - $item->amount;
+                         $total_debit = $total_debit + $item->amount;
+                       @endphp
                      @endif
                    @endif
                  </td>
+                 <td>{{ $balance }}</td>
                </tr>
              @endif
            @endforeach
          @endforeach
          <tr>
-           <td colspan="3">Closing Balance:</td>
-           <td>
-             @if ($closing_balance > 0)
-               {{ $closing_balance }}
-             @endif
-           </td>
-           <td>
-             @if ($closing_balance < 0)
-               {{ $closing_balance }}
-             @endif
-           </td>
+           <td colspan="4" class="text-right font-weight-bold">Total:</td>
+           <td class="font-weight-bold">{{ $total_credit }}</td>
+           <td class="font-weight-bold">{{ $total_debit }}</td>
+           <td></td>
          </tr>
        </tbody>
      </table>

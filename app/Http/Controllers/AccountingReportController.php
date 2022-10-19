@@ -138,23 +138,19 @@ class AccountingReportController extends Controller
             $ledgerHead = LedgerHead::where("name", $ledgerHead[0])->first()
                 ->id;
             $transactions = Calculation::calculate($ledgerHead);
+            $transaction_summary = Calculation::calculate_summary($ledgerHead);
+            $balance = $transaction_summary["openning"];
+            // return $transaction_summary;
             $transactions = $transactions
                 ->filter(function ($query) use ($ledgerHead) {
                     return $query->ledger_head == $ledgerHead;
                 })
                 ->values();
-            $closing_balance =
-                $transactions
-                    ->where("particular", ParticularType::Debit)
-                    ->sum("amount") -
-                $transactions
-                    ->where("particular", ParticularType::Credit)
-                    ->sum("amount");
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
             return view(
                 "backend.content.report.balanceSheet.transactions",
-                compact("transactions", "ledgerHead", "closing_balance")
+                compact("transactions", "ledgerHead", "balance")
             );
         } catch (\Throwable $th) {
             return $th->getMessage();
@@ -226,18 +222,13 @@ class AccountingReportController extends Controller
                     return $query->ledger_head == $ledgerHead;
                 })
                 ->values();
-            $closing_balance =
-                $transactions
-                    ->where("particular", ParticularType::Debit)
-                    ->sum("amount") -
-                $transactions
-                    ->where("particular", ParticularType::Credit)
-                    ->sum("amount");
+            $transaction_summary = Calculation::calculate_summary($ledgerHead);
+            $balance = $transaction_summary["openning"];
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
             return view(
                 "backend.content.report.display.transactions",
-                compact("transactions", "ledgerHead", "closing_balance")
+                compact("transactions", "ledgerHead", "balance")
             );
         } catch (\Throwable $th) {
             return $th->getMessage();
