@@ -75,6 +75,7 @@ class AccountingReportController extends Controller
                 );
                 $item->transaction_summary = $transaction_summary;
             }
+            // return $income_items;
             // calculating income & expense total
             $income_total = 0;
             $expense_total = 0;

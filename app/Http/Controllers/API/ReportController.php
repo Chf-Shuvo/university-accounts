@@ -87,10 +87,14 @@ class ReportController extends Controller
                 ->get();
             $transactions = $transactions
                 ->filter(function ($query) use ($ledger_head) {
-                    return $query->ledger_head != $ledger_head;
+                    return $query->ledger_head == $ledger_head;
                 })
                 ->values();
-            return response()->json($transactions, Response::HTTP_OK);
+            $ledgerHead = LedgerHead::find($ledger_head);
+            return view(
+                "backend.content.report.iumss.student_ledger",
+                compact("transactions", "ledgerHead")
+            );
         } catch (\Throwable $th) {
             return response()->json(
                 [
