@@ -1,4 +1,4 @@
-<div class="col-lg-12 col-md-12 col-sm-12">
+<div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
   <table class="table table-striped">
     <thead>
       <tr role="row">

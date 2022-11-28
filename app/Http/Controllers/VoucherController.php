@@ -103,14 +103,7 @@ class VoucherController extends Controller
     public function accounting_voucher_create()
     {
         try {
-            // $ledgerHeads = LedgerHead::with("alias")
-            //     ->where("parent_id", "!=", 0)
-            //     ->get();
             $vouchers = Voucher::all();
-            // $ledgerHeads->filter(function ($item) {
-            //     return $item->has_child < 1;
-            // });
-            // return $ledgerHeads;
             return view(
                 "backend.content.voucher.transaction.create",
                 compact("vouchers")
@@ -158,11 +151,7 @@ class VoucherController extends Controller
         try {
             // return $request;
             $entry_date = Carbon::parse($request->date)->format("Y-m-d");
-            $total_amount = array_sum($request->credit_amount);
-            $all_amounts = array_merge(
-                $request->debit_amount,
-                $request->credit_amount
-            );
+            $total_amount = array_sum($request->amount) / 2;
             Transaction::find($transaction_id)->update([
                 "date" => $entry_date,
                 "total_amount" => $total_amount,
@@ -170,7 +159,7 @@ class VoucherController extends Controller
             foreach ($request->particular as $index => $particular) {
                 TransactionDetail::find($particular)->update([
                     "date" => $entry_date,
-                    "amount" => $all_amounts[$index],
+                    "amount" => $request->amounts[$index],
                 ]);
             }
             toast("Voucher Updated Successfully", "Success");

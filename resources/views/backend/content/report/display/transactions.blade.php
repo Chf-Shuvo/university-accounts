@@ -8,7 +8,7 @@
      <br>
      <span>{{ Carbon::parse(session()->get('start_date'))->format('d-M-Y') }} - {{ Carbon::parse(session()->get('end_date'))->format('d-M-Y') }}</span>
    </div>
-   <div class="col-lg-12 col-md-12 col-sm-12">
+   <div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
      <table class="table table-striped">
        <thead>
          <tr role="row">

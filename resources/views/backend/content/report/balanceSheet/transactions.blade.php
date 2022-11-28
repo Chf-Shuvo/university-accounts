@@ -200,7 +200,7 @@
                     <thead>
                       <tr role="row">
                         <th>Particulars</th>
-                        <th>Account Type</th>
+                        <th>Type</th>
                         <th>Voucher Type</th>
                         <th>Debit</th>
                         <th>Credit</th>
@@ -213,23 +213,24 @@
                             {{ $item->head->head_code . ' (' . $item->head->name . ')' }}
                             <input type="hidden" name="particular[]" value="{{ $item->id }}">
                           </td>
+                          <td><input type="text" name="type[]" class="form-control" value="{{ $item->particular->value }}" readonly></td>
                           <td>
                             {{ $item->transaction->voucher->name }}
                           </td>
                           <td>
                             @if ($item->particular->value == 'Dr')
-                              <input type="text" name="debit_amount[]" value="{{ $item->amount }}" class="debit_amount" onkeyup="amountCalculation()">
+                              <input type="text" name="amounts[]" value="{{ $item->amount }}" class="debit_amount form-control" onkeyup="amountCalculation()">
                             @endif
                           </td>
                           <td>
                             @if ($item->particular->value == 'Cr')
-                              <input type="text" name="credit_amount[]" value="{{ $item->amount }}" class="credit_amount" onkeyup="amountCalculation()">
+                              <input type="text" name="amounts[]" value="{{ $item->amount }}" class="credit_amount form-control" onkeyup="amountCalculation()">
                             @endif
                           </td>
                         </tr>
                       @endforeach
                       <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                           <label for="">Narration:
                             <b>{{ $transactions->first()->transaction->narration }}</b></label>
                         </td>
