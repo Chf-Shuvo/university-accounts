@@ -32,9 +32,10 @@ class HomeController extends Controller
     public function change_period(Request $request)
     {
         try {
+            session()->forget(["start_date", "end_date"]);
             session()->put([
-                "start_date" => Carbon::parse($request->from)->format('Y-m-d'),
-                "end_date" => Carbon::parse($request->to)->format('Y-m-d'),
+                "start_date" => Carbon::parse($request->from)->format("Y-m-d"),
+                "end_date" => Carbon::parse($request->to)->format("Y-m-d"),
             ]);
             return redirect()->back();
         } catch (\Throwable $th) {

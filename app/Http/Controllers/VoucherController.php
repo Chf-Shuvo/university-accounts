@@ -151,7 +151,7 @@ class VoucherController extends Controller
         try {
             // return $request;
             $entry_date = Carbon::parse($request->date)->format("Y-m-d");
-            $total_amount = array_sum($request->amount) / 2;
+            $total_amount = array_sum($request->amounts) / 2;
             Transaction::find($transaction_id)->update([
                 "date" => $entry_date,
                 "total_amount" => $total_amount,

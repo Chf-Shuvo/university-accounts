@@ -8,11 +8,11 @@
          <div class="form-row">
            <div class="form-group col-md-6">
              <label for="">From:</label>
-             <input type="text" class="form-control date-picker" name="from" autocomplete="off" required onkeydown="return false">
+             <input type="date" class="form-control" name="from" autocomplete="off" required>
            </div>
            <div class="form-group col-md-6">
              <label for="">To:</label>
-             <input type="text" class="form-control date-picker" name="to" autocomplete="off" required onkeydown="return false">
+             <input type="date" class="form-control" name="to" autocomplete="off" required>
            </div>
            <div class="form-group col-md-12">
              <button type="submit" class="btn btn-success float-right"><i class="icon-copy dw dw-calendar1"></i> change-period</button>
