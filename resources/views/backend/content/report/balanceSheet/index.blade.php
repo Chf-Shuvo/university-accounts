@@ -31,7 +31,7 @@
               <tr>
                 <td>
                   @if ($item->has_child > 0)
-                    <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
+                    <a href="{{ route('report.balance-sheet.particurlars', [NameOfGroup::Liability->value, $item->id]) }}"><b>{{ $item->name }}</b></a>
                   @else
                     {{ $item->name }}
                   @endif
@@ -62,7 +62,7 @@
               <tr>
                 <td>
                   @if ($item->has_child > 0)
-                    <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
+                    <a href="{{ route('report.balance-sheet.particurlars', [NameOfGroup::Asset->value, $item->id]) }}"><b>{{ $item->name }}</b></a>
                   @else
                     {{ $item->name }}
                   @endif

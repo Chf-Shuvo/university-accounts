@@ -2,6 +2,7 @@
 
 namespace App\Helper\TransactionReports;
 
+use App\Enums\NameOfGroup;
 use Carbon\Carbon;
 use App\Models\LedgerHead;
 use App\Enums\ParticularType;
@@ -65,7 +66,7 @@ class Calculation
         }
     }
 
-    public static function calculate_summary($head)
+    public static function calculate_summary($type, $head)
     {
         try {
             $root_date = Carbon::createFromFormat("Y-m-d", self::root_date());
@@ -142,9 +143,16 @@ class Calculation
                         }
                     }
                 }
-                $openning = $root_debit - $root_credit;
-                // return $root_debit . '+' . $root_credit . '+' . $openning;
-                $closing = $openning + $debit - $credit;
+                if ($type == NameOfGroup::Liability->value) {
+                    $openning = $root_credit - $root_debit;
+                    // return $root_debit . '+' . $root_credit . '+' . $openning;
+                    $closing = $openning + $credit - $debit;
+                } else {
+                    $openning = $root_debit - $root_credit;
+                    // return $root_debit . '+' . $root_credit . '+' . $openning;
+                    $closing = $openning + $debit - $credit;
+                }
+
                 $transaction_summary = [
                     "openning" => $openning,
                     "debit" => $debit,

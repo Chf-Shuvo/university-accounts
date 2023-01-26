@@ -24,6 +24,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($asset_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    NameOfGroup::Asset->value,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -39,6 +40,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($liability_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    NameOfGroup::Liability->value,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -57,6 +59,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($income_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -71,6 +74,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($expense_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -101,7 +105,7 @@ class AccountingReportController extends Controller
         }
     }
     // this function will return all the childs of a group ledger head
-    public function get_particulars($ledgerHead)
+    public function get_particulars($type, $ledgerHead)
     {
         try {
             // return $ledgerHead;
@@ -111,6 +115,7 @@ class AccountingReportController extends Controller
             )->find($ledgerHead);
             foreach ($particular->particulars as $ledger) {
                 $transaction_summary = Calculation::calculate_summary(
+                    $type,
                     $ledger->id
                 );
                 $ledger->transaction_summary = $transaction_summary;
@@ -121,11 +126,18 @@ class AccountingReportController extends Controller
                     return $item->alias_of == null;
                 }
             );
-            // return $particular;
-            return view(
-                "backend.content.report.balanceSheet.particulars",
-                compact("particular")
-            );
+//             return $particular;
+            if ($type == NameOfGroup::Asset->value) {
+                return view(
+                    "backend.content.report.balanceSheet.particulars",
+                    compact("particular", "type")
+                );
+            } else {
+                return view(
+                    "backend.content.report.balanceSheet.liability.particulars",
+                    compact("particular", "type")
+                );
+            }
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -139,7 +151,10 @@ class AccountingReportController extends Controller
             $ledgerHead = LedgerHead::where("name", $ledgerHead[0])->first()
                 ->id;
             $transactions = Calculation::calculate($ledgerHead);
-            $transaction_summary = Calculation::calculate_summary($ledgerHead);
+            $transaction_summary = Calculation::calculate_summary(
+                null,
+                $ledgerHead
+            );
             $balance = $transaction_summary["openning"];
             // return $transaction_summary;
             $transactions = $transactions
@@ -223,7 +238,7 @@ class AccountingReportController extends Controller
                     return $query->ledger_head == $ledgerHead;
                 })
                 ->values();
-            $transaction_summary = Calculation::calculate_summary($ledgerHead);
+            $transaction_summary = Calculation::calculate_summary(null,$ledgerHead);
             $balance = $transaction_summary["openning"];
             $ledgerHead = LedgerHead::find($ledgerHead);
             // return $transactions;
@@ -253,6 +268,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($asset_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -268,6 +284,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($liability_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -290,6 +307,7 @@ class AccountingReportController extends Controller
             )->find($ledgerHead);
             foreach ($particular->particulars as $ledger) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $ledger->id
                 );
                 $ledger->transaction_summary = $transaction_summary;
@@ -355,6 +373,7 @@ class AccountingReportController extends Controller
                 ->get();
             foreach ($asset_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $item->id
                 );
                 $item->transaction_summary = $transaction_summary;
@@ -385,6 +404,7 @@ class AccountingReportController extends Controller
             )->find($ledgerHead);
             foreach ($particular->particulars as $ledger) {
                 $transaction_summary = Calculation::calculate_summary(
+                    null,
                     $ledger->id
                 );
                 $ledger->transaction_summary = $transaction_summary;

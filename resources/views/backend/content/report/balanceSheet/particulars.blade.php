@@ -12,6 +12,7 @@
   <div class="row mt-5">
     <div class="col-md-12 col-12">
       <div class="pd-20 card-box height-100-p">
+          <h4 class="text-center py-3">{{$particular->name}}</h4>
         <table class="data-table-export table table-striped">
           <thead>
             <tr>
@@ -34,7 +35,7 @@
               <tr>
                 <td>
                   @if ($item->has_child > 0)
-                    <a href="{{ route('report.balance-sheet.particurlars', $item->id) }}"><b>{{ $item->name }}</b></a>
+                    <a href="{{ route('report.balance-sheet.particurlars', [$type, $item->id]) }}"><b>{{ $item->name }}</b></a>
                   @else
                     <a href="{{ route('report.balance-sheet.transactions', $item->name) }}"><b>{{ $item->name }}</b></a>
                   @endif
