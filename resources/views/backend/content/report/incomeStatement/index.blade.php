@@ -10,10 +10,10 @@
   </div>
   @include('backend.partial.date_setter')
   <div class="row mt-5">
-    {{-- expense part --}}
     <div class="col-md-12">
       <div class="pd-20 card-box height-100-p">
         <div class="row">
+            {{-- Expense --}}
           <div class="col-md-6">
             <table class="table table-borderless">
               <thead class="border border-dark rounded">
@@ -34,15 +34,16 @@
                         {{ $item->name }}
                       @endif
                     </td>
-                    <td class="text-right">{{ $item->transaction_summary['closing'] }}</td>
+                    <td class="text-right">{{ $item->transaction_summary['debit'] - $item->transaction_summary['credit'] }}</td>
                   </tr>
                   @php
-                    $liability_total = $liability_total + $item->transaction_summary['closing'];
+                    $liability_total = $liability_total + ($item->transaction_summary['debit'] - $item->transaction_summary['credit']);
                   @endphp
                 @endforeach
               </tbody>
             </table>
           </div>
+            {{-- Income --}}
           <div class="col-md-6">
             <table class="table table-borderless">
               <thead class="border border-dark rounded">
@@ -63,10 +64,10 @@
                         {{ $item->name }}
                       @endif
                     </td>
-                    <td class="text-right">{{ -1 * $item->transaction_summary['closing'] }}</td>
+                    <td class="text-right">{{ $item->transaction_summary['credit'] -  $item->transaction_summary['debit']}}</td>
                   </tr>
                   @php
-                    $income_total = $income_total + -1 * $item->transaction_summary['closing'];
+                    $income_total = $income_total + ($item->transaction_summary['credit'] -  $item->transaction_summary['debit']);
                   @endphp
                 @endforeach
               </tbody>
@@ -89,7 +90,7 @@
           </div>
           <div class="col-md-6">
             @if ($difference < 0)
-              <table class="table-borderless">
+              <table class="table table-borderless">
                 <tbody>
                   <tr>
                     <td><b>Excess of Expenditure over Income:</b></td>

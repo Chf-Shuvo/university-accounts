@@ -22,6 +22,9 @@
             </tr>
           </thead>
           <tbody>
+          @php
+          $total = 0;
+          @endphp
             @foreach ($particular->particulars as $item)
               <tr>
                 <td>
@@ -33,9 +36,16 @@
                 </td>
                 <td>{{ $item->transaction_summary['debit'] }}</td>
                 <td>{{ $item->transaction_summary['credit'] }}</td>
-                <td>{{ -1 * $item->transaction_summary['closing'] }}</td>
+                <td>{{ $item->transaction_summary['credit'] - $item->transaction_summary['debit'] }}</td>
               </tr>
+                @php
+                $total = $total + ($item->transaction_summary['credit'] - $item->transaction_summary['debit']);
+                @endphp
             @endforeach
+          <tr class="bg-dark text-white">
+              <td colspan="3"><b>Total:</b></td>
+              <td>{{$total}}</td>
+          </tr>
           </tbody>
         </table>
       </div>

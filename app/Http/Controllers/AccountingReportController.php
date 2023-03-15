@@ -276,7 +276,7 @@ class AccountingReportController extends Controller
                 );
                 $item->transaction_summary = $transaction_summary;
             }
-            // return $asset_items;
+//             return $asset_items;
 
             $liability_items = LedgerHead::where(
                 "company_id",
@@ -292,7 +292,7 @@ class AccountingReportController extends Controller
                 );
                 $item->transaction_summary = $transaction_summary;
             }
-            // return $liability_items;
+//             return $liability_items;
             return view(
                 "backend.content.report.incomeStatement.index",
                 compact("asset_items", "liability_items")
@@ -316,7 +316,7 @@ class AccountingReportController extends Controller
                 $ledger->transaction_summary = $transaction_summary;
                 // return $ledger;
             }
-            // return $particular;
+//             return $particular;
             return view(
                 "backend.content.report.incomeStatement.particulars",
                 compact("particular")
@@ -415,7 +415,7 @@ class AccountingReportController extends Controller
             }
             // return $particular;
             return view(
-                "backend.content.report.incomeStatement.particulars",
+                "backend.content.report.expense.particulars",
                 compact("particular")
             );
         } catch (\Throwable $th) {
