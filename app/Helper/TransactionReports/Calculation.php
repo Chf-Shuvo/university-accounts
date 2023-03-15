@@ -86,7 +86,7 @@ class Calculation
                     ->where("ledger_head", $head)
                     ->get();
             }
-            // return $transactions;
+//             return $transactions;
             if ($transactions->isEmpty()) {
                 $transaction_summary = [
                     "openning" => 0,

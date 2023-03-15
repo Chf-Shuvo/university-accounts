@@ -15,6 +15,7 @@ class AccountingReportController extends Controller
     public function balance_sheet_index()
     {
         try {
+//            dd(session()->get("root_date"));
             $asset_items = LedgerHead::where(
                 "company_id",
                 auth()->user()->company
@@ -57,6 +58,7 @@ class AccountingReportController extends Controller
                 ->where("name_of_group", NameOfGroup::Income)
                 ->orderBy("visibility_order", "asc")
                 ->get();
+//            return $income_items;
             foreach ($income_items as $item) {
                 $transaction_summary = Calculation::calculate_summary(
                     null,
@@ -79,7 +81,8 @@ class AccountingReportController extends Controller
                 );
                 $item->transaction_summary = $transaction_summary;
             }
-            // return $income_items;
+//             return $income_items;
+//             return $expense_items;
             // calculating income & expense total
             $income_total = 0;
             $expense_total = 0;

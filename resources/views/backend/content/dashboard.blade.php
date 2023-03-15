@@ -67,7 +67,7 @@
 @endsection
 
 @push('js')
-  <script src="https://delivery.chfsmarket.top/backend/src/plugins/apexcharts/apexcharts.min.js"></script>
+  <script src="{{asset('backend/src/plugins/apexcharts/apexcharts.min.js')}}"></script>
   <script>
     var options3 = {
       series: [{
