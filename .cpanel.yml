@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/user/ac.baiustserver.com/
+    - export DEPLOYPATH=/home/baiustac/baiustserver.com/
     - /bin/cp * $DEPLOYPATH
